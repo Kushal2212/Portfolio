@@ -60,8 +60,30 @@ export async function getCurrentUser() {
   }
 }
 
-export async function requireAdmin() {
+/**
+ * Verify the signed cookie *and* the underlying account. A token whose user
+ * has been deleted, demoted or replaced no longer grants access.
+ */
+export async function getAdminUser() {
   const session = await getSession();
-  if (!session || session.role !== "ADMIN") redirect("/admin/login");
-  return session;
+  if (!session) return null;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: session.sub } });
+    if (!user || user.role !== "ADMIN") return null;
+    return user;
+  } catch {
+    return null;
+  }
+}
+
+export async function requireAdmin(): Promise<SessionPayload> {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  return {
+    sub: user.id,
+    email: user.email,
+    name: user.name || "Admin",
+    role: user.role,
+  };
 }

@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSettings } from "@/lib/settings";
 import { AdminShell } from "@/components/admin/admin-shell";
+
+export const metadata: Metadata = {
+  title: { default: "Admin", template: "%s · Admin" },
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function AdminDashboardLayout({
   children,

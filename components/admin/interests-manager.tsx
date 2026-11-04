@@ -11,6 +11,7 @@ import {
   Coffee,
   Gamepad2,
   Github,
+  Goal,
   Mountain,
   Music,
   Palette,
@@ -19,6 +20,7 @@ import {
   Plus,
   Sparkles,
   Trash2,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -57,6 +59,8 @@ const iconMap: Record<string, LucideIcon> = {
   plane: Plane,
   gamepad: Gamepad2,
   code: Code2,
+  trophy: Trophy,
+  goal: Goal,
 };
 
 const iconOptions = Object.keys(iconMap);

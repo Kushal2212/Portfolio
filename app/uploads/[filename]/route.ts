@@ -5,12 +5,12 @@ import path from "path";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+// SVG is intentionally absent: it can execute script when opened directly.
 const TYPES: Record<string, string> = {
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
   png: "image/png",
   webp: "image/webp",
-  svg: "image/svg+xml",
 };
 
 /**

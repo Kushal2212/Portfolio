@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Download, MapPin, Clock, Coffee, GraduationCap } from "lucide-react";
+import {
+  ArrowUpRight,
+  Download,
+  MapPin,
+  Clock,
+  Coffee,
+  GraduationCap,
+} from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { skillGroups, timeline, certifications } from "@/lib/content";
 import { SectionHeading } from "@/components/shared/section-heading";
@@ -22,12 +29,15 @@ export const revalidate = 600;
 
 export default async function AboutPage() {
   const settings = await getSettings();
-  const [degree, ...school] = settings.education.split(",").map((part) => part.trim());
+  const school = settings.education
+    .split(",")
+    .map((part) => part.trim())
+    .slice(1);
   const aboutTimeline = timeline.map((item) =>
     item.kind === "education"
       ? {
           ...item,
-          title:  item.title,
+          title: item.title,
           org: school.join(", ") || item.org,
           location: settings.hometown || item.location,
         }
@@ -47,24 +57,34 @@ export default async function AboutPage() {
               <h1 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
                 I build for the web,
                 <br />
-                and I care how it <span className="font-serif font-normal">feels</span>.
+                and I care how it{" "}
+                <span className="font-serif font-normal">feels</span>.
               </h1>
               <p className="mt-6 max-w-xl text-[1.02rem] leading-relaxed text-muted-foreground">
-                I&apos;m {settings.fullName.split(" ")[0]}, a full-stack engineer and interaction
-                designer from {settings.hometown}. I have spent the last six years between product, design and
-                engineering, mostly helping small teams turn messy ideas into something people can use.
+                I&apos;m {settings.fullName.split(" ")[0]}, a BSc. CSIT student from{" "}
+                {settings.hometown} who got interested in computers long before
+                figuring out what to actually do with them. I&apos;m into full-stack
+                development, backend engineering, and occasionally convincing
+                myself that fixing one bug won&apos;t take the entire evening. I
+                enjoy building things that solve real problems, whether it&apos;s an
+                AI-powered cardamom disease detection system or an anonymous
+                feedback web app. Most of my learning happens through
+                experimenting, breaking things, fixing them, and watching Chai
+                aur Code videos (sometimes even understanding everything on the
+                first watch).
               </p>
               <p className="mt-4 max-w-xl text-[0.98rem] leading-relaxed text-muted-foreground">
-                I started out making websites for cultural organisations in Nepal. I learned to build
-                backends because I was tired of waiting for them, and never really stopped doing both.
-                These days I work on frontend architecture at Fathom Labs, keep a small UI library
-                going, and write when I have something worth saying.
+                When I&apos;m not writing code or wondering why something worked
+                yesterday but doesn&apos;t today, you&apos;ll probably find me watching
+                football or cricket. Still learning, still building, and
+                definitely still Googling things I probably should remember by
+                now.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild variant="brand" className="rounded-full">
                   <a href={settings.resumeUrl} download>
-                    <Download className="size-4" /> Download résumé
+                    <Download className="size-4" /> Download resume
                   </a>
                 </Button>
                 <Button asChild variant="outline" className="rounded-full">
@@ -95,14 +115,14 @@ export default async function AboutPage() {
                     <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/60">
                       {settings.hometown}
                     </p>
-                    <p className="mt-1 font-serif text-2xl">{settings.fullName}</p>
+                    <p className="mt-1 font-serif text-2xl">
+                      {settings.fullName}
+                    </p>
                   </div>
                 </div>
               </div>
             </Reveal>
           </div>
-
-         
         </div>
       </section>
 
@@ -120,25 +140,23 @@ export default async function AboutPage() {
           />
           <Reveal className="space-y-5 text-[0.98rem] leading-[1.85] text-muted-foreground">
             <p>
-              My first website was a tribute page to a football team, built in a cyber café in
-              Madi on a dial-up connection that dropped every few minutes. I was thirteen. I
-              still remember how strange it felt to make something and then find it somewhere in the
-              world.
+              I&apos;m a BSc. CSIT student with a passion for computer science and
+              technology that started in childhood. I enjoy turning ideas into
+              practical projects, from building an AI-powered cardamom disease
+              detection system to developing an anonymous feedback web
+              application.
             </p>
+
             <p>
-              At university I studied computer science, but most of what I cared about happened
-              outside the syllabus: a student magazine site, a hackathon for public transport data, a
-              reading list app nobody asked for. That pattern carried into my career. I kept drifting
-              toward teams where engineering and design were part of the same conversation.
-            </p>
-            <p>
-              These days I am most useful when a product needs someone who can see the whole thing at
-              once: the data model, the API, the empty states, the loading screen, the one line of copy
-              that makes it make sense. I like simple infrastructure, obvious interfaces, and software
-              that does not make people feel stupid.
+              I&apos;m always curious to learn something new, whether it&apos;s exploring
+              backend development, experimenting with new technologies, or
+              watching tech tutorials from creators like Chai aur Code. Beyond
+              coding, I enjoy watching and playing sports, especially football
+              and cricket.
             </p>
             <p className="text-sm text-muted-foreground">
-              I still get the same feeling when something I made goes live. It has not worn off.
+              I believe in learning by building, staying curious, and
+              continuously improving as a developer.
             </p>
           </Reveal>
         </div>
@@ -148,7 +166,7 @@ export default async function AboutPage() {
         <div className="container-page py-8">
           <div className="relative aspect-[21/9] overflow-hidden rounded-2xl border border-border">
             <Image
-              src="/images/studio.jpg"
+              src="/images/studio.jpeg"
               alt="A collaborative studio workspace with people working together"
               fill
               sizes="100vw"
@@ -179,7 +197,10 @@ export default async function AboutPage() {
               }
               description="A short version of the last few years. The longer one usually comes up over coffee."
             />
-            <Reveal delay={0.1} className="mt-8 hidden rounded-2xl border border-border bg-card p-5 lg:block">
+            <Reveal
+              delay={0.1}
+              className="mt-8 hidden rounded-2xl border border-border bg-card p-5 lg:block"
+            >
               <p className="flex items-center gap-2 text-xs font-medium">
                 <MapPin className="size-3.5 text-brand" /> {settings.hometown}
               </p>
@@ -187,10 +208,12 @@ export default async function AboutPage() {
                 <GraduationCap className="size-3.5" /> {settings.education}
               </p>
               <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="size-3.5" /> UTC+5:45. I overlap with Europe in the morning.
+                <Clock className="size-3.5" /> UTC+5:45. I overlap with Europe
+                in the morning.
               </p>
               <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                <Coffee className="size-3.5" /> Usually online by 9am, coffee nearby
+                <Coffee className="size-3.5" /> Usually online by 9am, coffee
+                nearby
               </p>
             </Reveal>
           </div>
@@ -198,15 +221,14 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      
-
       <section className="section-pad border-t border-border">
         <div className="container-page">
           <SectionHeading
             eyebrow="Toolbox"
             title={
               <>
-                What I build <span className="font-serif font-normal">with</span>.
+                What I build{" "}
+                <span className="font-serif font-normal">with</span>.
               </>
             }
             description="Mostly the React ecosystem, with enough backend experience to be useful on both sides."
@@ -215,11 +237,17 @@ export default async function AboutPage() {
             {skillGroups.map((group, i) => (
               <Reveal key={group.title} delay={i * 0.08}>
                 <div className="h-full rounded-2xl border border-border bg-card p-6">
-                  <h3 className="text-base font-semibold tracking-tight">{group.title}</h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{group.description}</p>
+                  <h3 className="text-base font-semibold tracking-tight">
+                    {group.title}
+                  </h3>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {group.description}
+                  </p>
                   <div className="mt-5 flex flex-wrap gap-1.5">
                     {group.items.map((item) => (
-                      <Badge key={item} variant="outline">{item}</Badge>
+                      <Badge key={item} variant="outline">
+                        {item}
+                      </Badge>
                     ))}
                   </div>
                 </div>
@@ -233,12 +261,19 @@ export default async function AboutPage() {
             </p>
             <ul className="mt-4 divide-y divide-border">
               {certifications.map((cert) => (
-                <li key={cert.name} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
+                <li
+                  key={cert.name}
+                  className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+                >
                   <span>
                     {cert.name}
-                    <span className="ml-2 text-xs text-muted-foreground">· {cert.issuer}</span>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      · {cert.issuer}
+                    </span>
                   </span>
-                  <span className="font-mono text-[10px] text-muted-foreground">{cert.year}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    {cert.year}
+                  </span>
                 </li>
               ))}
             </ul>

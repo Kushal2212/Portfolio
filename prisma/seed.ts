@@ -5,6 +5,23 @@ import path from "node:path";
 
 const prisma = new PrismaClient();
 
+/**
+ * This script writes demo posts, messages, interests and visits. It must never
+ * run against a real site by accident, so it is opt-in and refuses production.
+ */
+if (process.env.ALLOW_DB_SEED !== "true") {
+  console.error(
+    "Seed disabled. Prisma's seed script writes demo content and is opt-in.\n" +
+      "Run `ALLOW_DB_SEED=true npm run db:seed` only against an empty development database.",
+  );
+  process.exit(1);
+}
+
+if (process.env.NODE_ENV === "production") {
+  console.error("Refusing to seed a production environment.");
+  process.exit(1);
+}
+
 function readPost(name: string) {
   return readFileSync(path.join(process.cwd(), "prisma", "seed-posts", `${name}.md`), "utf8");
 }
@@ -173,8 +190,11 @@ const messages = [
 async function main() {
   console.log("Seeding portfolio…");
 
-  const adminEmail = (process.env.ADMIN_EMAIL || "admin@kushaldahal.dev").toLowerCase();
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin1234";
+  const adminEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+  const adminPassword = process.env.ADMIN_PASSWORD || "";
+  if (!adminEmail || !adminPassword) {
+    throw new Error("ADMIN_EMAIL and ADMIN_PASSWORD must be set before seeding.");
+  }
 
   await prisma.user.upsert({
     where: { email: adminEmail },

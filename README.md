@@ -17,36 +17,40 @@ Requirements: Node.js 20.9+ and npm.
 ```bash
 npm install
 cp .env.example .env
-# Set AUTH_SECRET (openssl rand -base64 32) and change the admin password.
+# Set DATABASE_URL, AUTH_SECRET (openssl rand -base64 48),
+# NEXT_PUBLIC_SITE_URL and a strong ADMIN_PASSWORD.
 
-npm run setup   # prisma db push + seed demo content
+npm run db:push   # create collections and indexes
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open <http://localhost:3000>. Sign in at `/admin/login` with the
+`ADMIN_EMAIL` / `ADMIN_PASSWORD` from `.env`. The owner account is created on
+the first successful sign-in while the user table is empty. Change the password
+from **Admin → Settings** afterwards.
 
-The demo admin is at <http://localhost:3000/admin/login>:
+Demo content is opt-in:
 
-| Field    | Value                    |
-| -------- | ------------------------ |
-| Email    | `admin@kushaldahal.dev`  |
-| Password | `admin1234`              |
+```bash
+ALLOW_DB_SEED=true npm run db:seed
+```
 
-These come from `.env`. The login page shows them only outside production. Change
-`ADMIN_EMAIL`, `ADMIN_PASSWORD` and `AUTH_SECRET` before deploying.
+Never run it against a real database — it replaces posts, interests, messages
+and visitor history with sample data.
 
 ### Scripts
 
 | Command             | What it does                                             |
 | ------------------- | -------------------------------------------------------- |
 | `npm run dev`       | Start the dev server                                     |
-| `npm run build`     | Generate Prisma Client and create a production build     |
+| `npm run check:env` | Validate environment variables without building          |
+| `npm run build`     | Validate env, generate Prisma Client and build           |
 | `npm start`         | Serve the production build                               |
 | `npm run lint`      | Run ESLint                                               |
 | `npm run db:push`   | Sync `prisma/schema.prisma` to the database              |
-| `npm run db:seed`   | Seed demo content (idempotent enough to re-run locally)  |
+| `npm run db:seed`   | Seed demo content (requires `ALLOW_DB_SEED=true`)        |
 | `npm run db:studio` | Open Prisma Studio                                       |
-| `npm run setup`     | `db:push` + `db:seed`                                    |
+| `npm run setup`     | `db:push` (seed separately if you want demo content)     |
 | `node scripts/generate-resume.mjs` | Regenerate `public/resume.pdf`            |
 
 The database is MongoDB (Atlas or local). `DATABASE_URL` must include the
@@ -100,9 +104,12 @@ database name before any query string, e.g.
 
 ### Demo content
 
-`npm run db:seed` creates an admin, six substantial essays, six interests, six
-messages, two media records and about 30 days of anonymised visitor history so
-every screen looks alive on first run.
+The seed is deliberately opt-in: `ALLOW_DB_SEED=true npm run db:seed`. It creates
+an admin, six substantial essays, six interests, six messages, two media records
+and about 30 days of anonymised visitor history so every screen looks alive on
+first run. The script refuses to run in production and exits without
+`ALLOW_DB_SEED=true`, so a real site cannot be filled with demo data by
+accident.
 
 ---
 
@@ -111,9 +118,9 @@ every screen looks alive on first run.
 | Variable                       | Required | Purpose                                                        |
 | ------------------------------ | -------- | -------------------------------------------------------------- |
 | `DATABASE_URL`                 | Yes      | MongoDB connection string including the database name          |
-| `AUTH_SECRET`                  | Yes      | Signs the session JWT. Use a long random string                |
+| `AUTH_SECRET`                  | Yes      | Signs the session JWT. 32+ random characters                   |
 | `ADMIN_EMAIL`                  | Yes      | First-run admin account / notification fallback                |
-| `ADMIN_PASSWORD`               | Yes      | First-run admin password                                       |
+| `ADMIN_PASSWORD`               | Yes      | First-run admin password (12+ characters in production)        |
 | `NEXT_PUBLIC_SITE_URL`         | Yes      | Canonical site origin used by metadata and sitemap             |
 | `CONTACT_TO_EMAIL`             | No       | Where contact notifications are sent                           |
 | `RESEND_API_KEY`               | No       | Enables Resend email notifications                             |
@@ -123,6 +130,7 @@ every screen looks alive on first run.
 | `CLOUDINARY_CLOUD_NAME`        | No       | Enables remote media storage                                   |
 | `CLOUDINARY_API_KEY`           | No       | Cloudinary upload/delete signing                               |
 | `CLOUDINARY_API_SECRET`        | No       | Cloudinary upload/delete signing                               |
+| `ALLOW_DB_SEED`                | No       | Must be `true` before the demo seed script will run            |
 
 Without Resend or Turnstile, contact messages still save to the database. Without
 Cloudinary, uploads go to `public/uploads/`.
@@ -143,7 +151,7 @@ app/
   admin/
     login/         Sign-in page (unauthenticated)
     (dashboard)/   Protected shell: dashboard, blog, media, visitors, messages, settings
-  api/             Contact, tracking, post views, upload, analytics CSV
+  api/             Contact, tracking, post views, upload, analytics CSV, health
   og/              Dynamic Open Graph image
 actions/           Server actions for auth, posts, media, messages, interests, settings
 components/        UI kit, Aceternity-style effects, public sections, admin features
@@ -156,7 +164,10 @@ proxy.ts           Route protection for /admin/*
   hashes, a `jose` HS256 JWT in an HTTP-only cookie, first-run bootstrap from
   `ADMIN_*`, and login rate limiting per IP and email. `proxy.ts` checks the
   token before the admin segment renders; every server action calls
-  `requireAdmin()` as a second line of defence.
+  `requireAdmin()`, which verifies the token *and* re-reads the user from the
+  database, so deleted or demoted accounts lose access immediately. There are no
+  fallback secrets: the app refuses to start without a strong `AUTH_SECRET`, and
+  production bootstrap requires a 12+ character `ADMIN_PASSWORD`.
 - **Data.** Prisma models for users, posts, media, messages, visits, interests
   and singleton site settings, backed by MongoDB. Tags are stored on each post as
   a `String[]` because MongoDB does not support Prisma's implicit many-to-many
@@ -166,15 +177,16 @@ proxy.ts           Route protection for /admin/*
   path, referrer, coarse device/browser/OS and optional Vercel country headers —
   no raw IP addresses. The tracker skips admin routes and the owner's session,
   and respects the cookie banner's "Essential only" choice.
-- **Media.** Uploads are validated for type and 5 MB max. SVGs are stripped of
-  scripts and event handlers. Local files live in `public/uploads`; setting the
+- **Media.** Uploads accept JPG, PNG and WebP up to 5 MB. SVG is rejected
+  because it is an active document format. Every file is decoded and re-encoded
+  with `sharp` to WebP at a maximum of 4096px, which validates the bytes and
+  strips EXIF/GPS metadata. Local files live in `public/uploads`; setting the
   Cloudinary variables switches uploads and deletes to the Cloudinary REST API.
   Uploaded images stay out of the public gallery until an admin adds a caption
   and enables **Show in gallery** — or switches on **Publish uploads to the
-  public gallery** before uploading. Dimensions are read with `sharp` for layout.
-  Route handlers parse multipart bodies with the native Web `FormData` API (the
-  App Router equivalent of multer), and Cloudinary is used automatically once
-  its three environment variables are set.
+  public gallery** before uploading. Route handlers parse multipart bodies with
+  the native Web `FormData` API (the App Router equivalent of multer), and
+  Cloudinary is used automatically once its three environment variables are set.
 - **Email.** Contact notifications use the Resend REST API. Messages are always
   stored first, so a provider outage never loses an enquiry.
 - **Motion.** Framer Motion/Motion animations are paired with
@@ -183,9 +195,10 @@ proxy.ts           Route protection for /admin/*
 ### Database notes
 
 The schema targets MongoDB. Run `npx prisma db push` to create collections and
-indexes, then `npm run db:seed` for demo content. The seed is safe to re-run: it
-replaces posts, interests, messages and visitor history, and upserts settings and
-the two seeded media records.
+indexes; add demo content only with `ALLOW_DB_SEED=true npm run db:seed`. The
+seed is destructive: it replaces posts, interests, messages and visitor history,
+and upserts settings plus the two seeded media records. It is blocked in
+production and when `ALLOW_DB_SEED` is not explicitly `true`.
 
 Switching providers (for example to PostgreSQL) is possible but requires more
 than a connection string: remove the `@map("_id")` annotations and replace the
@@ -194,18 +207,34 @@ uses portable scalar types.
 
 ### Deploying
 
-- **Vercel:** set every required env var, run `prisma generate` in the build
-  (already part of `npm run build`), and point `DATABASE_URL` at MongoDB Atlas.
-  Allow the deployment's IPs in Atlas (or use `0.0.0.0/0` for a quick start).
-- **Uploads:** the local filesystem is ephemeral on serverless hosts. Cloudinary
-  is already supported and is the recommended production store.
+`npm run build` runs `scripts/check-env.mjs` first. A missing or weak secret, a
+partial Cloudinary/Turnstile configuration, or a localhost production URL stops
+the build with a specific message. Set `SKIP_ENV_VALIDATION=1` only for a
+throwaway preview.
+
+- **Vercel:** set every required env var, point `DATABASE_URL` at MongoDB Atlas,
+  and allow the deployment's IPs in Atlas (or use `0.0.0.0/0` for a quick start).
+  `prisma generate` is already part of the build and `postinstall`.
+- **Node host:** run `npm ci`, `npm run build`, then `npm start`. Persist
+  `public/uploads` or use Cloudinary, which is the recommended production store
+  because serverless filesystems are ephemeral.
+- **Secrets:** `AUTH_SECRET` must be at least 32 random characters and
+  `ADMIN_PASSWORD` at least 12 in production. The first login creates the owner
+  account while the user table is empty; change the password from **Admin →
+  Settings** immediately afterwards.
+- **Site URL:** set `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin so canonical
+  links, OG images, cookies and the sitemap are correct. Admin cookies derive
+  `Secure` from `x-forwarded-proto`, so TLS-terminating proxies work too.
 - **Email:** verify your domain in Resend and set `RESEND_FROM_EMAIL`. The
   default `onboarding@resend.dev` sender only works for limited testing.
-- **Secrets:** rotate `AUTH_SECRET` and the admin password. Seeding production is
-  optional; if you skip it, the first login with `ADMIN_EMAIL` /
-  `ADMIN_PASSWORD` creates the account when the user table is empty.
-- **Site URL:** set `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin so canonical
-  links, OG images and the sitemap are correct.
+- **Health check:** point uptime monitoring at `GET /api/health`; it pings
+  MongoDB and returns `503` when the database is unreachable.
+- **Headers:** production responses include HSTS, a content security policy,
+  `nosniff`, frame/referrer/permissions policies, and `noindex` on `/admin` and
+  `/api`. `poweredByHeader` is disabled.
+- **Audit:** run `npm audit` after dependency changes. Current transitive
+  advisories are tracked; apply non-breaking updates with `npm audit fix` and
+  review breaking upgrades individually.
 
 ---
 

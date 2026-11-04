@@ -228,4 +228,18 @@ export const interestsFallback = [
     icon: "music",
     order: 5,
   },
+  {
+    title: "Cricket",
+    description:
+      "South Africa, mostly. Test matches, fast bowling and a scorecard I check more often than I should.",
+    icon: "trophy",
+    order: 6,
+  },
+  {
+    title: "Football",
+    description:
+      "Brazil, always. Yellow shirts and the kind of football that makes an ordinary evening better.",
+    icon: "goal",
+    order: 7,
+  },
 ];

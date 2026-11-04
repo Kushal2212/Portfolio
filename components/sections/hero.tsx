@@ -8,7 +8,6 @@ import { ArrowDownRight, ArrowUpRight, Download, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SocialLinks } from "@/components/shared/social-links";
 import type { Settings } from "@/lib/settings";
-import { cn } from "@/lib/utils";
 
 function LocalTime() {
   const [time, setTime] = React.useState<string>("");

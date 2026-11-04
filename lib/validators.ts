@@ -1,5 +1,20 @@
 import { z } from "zod";
 
+/**
+ * Admin-managed links and image sources are rendered into href/src attributes.
+ * Allow only site-relative paths or explicit http(s) URLs so a typo (or a
+ * compromised account) cannot inject javascript:/data: URLs.
+ */
+const safeUrl = (max = 500) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .refine(
+      (value) => value === "" || value.startsWith("/") || /^https?:\/\//i.test(value),
+      "Use an http(s):// URL or a path starting with /",
+    );
+
 export const contactSchema = z.object({
   name: z.string().trim().min(2, "Please tell me your name").max(80),
   email: z.email("Enter a valid email address").max(160),
@@ -30,7 +45,7 @@ export const postSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and hyphens"),
   excerpt: z.string().trim().max(300).optional().or(z.literal("")),
   content: z.string().min(20, "Add some content before saving"),
-  coverImage: z.string().trim().max(500).optional().or(z.literal("")),
+  coverImage: safeUrl(500).optional(),
   status: z.enum(["DRAFT", "PUBLISHED", "SCHEDULED"]),
   featured: z.boolean().optional(),
   tags: z.array(z.string().trim().min(1).max(40)).max(8).optional(),
@@ -55,8 +70,8 @@ export const musicSchema = z.object({
     (value) => (value === "" || value === null || value === undefined ? undefined : Number(value)),
     z.number().int().min(1900, "Use a year like 2025").max(2100).optional(),
   ),
-  coverUrl: z.string().trim().max(500).optional().or(z.literal("")),
-  link: z.string().trim().max(500).optional().or(z.literal("")),
+  coverUrl: safeUrl(500).optional(),
+  link: safeUrl(500).optional(),
   note: z.string().trim().max(300).optional().or(z.literal("")),
 });
 
@@ -70,14 +85,19 @@ export const settingsSchema = z.object({
   location: z.string().trim().max(120).optional().or(z.literal("")),
   education: z.string().trim().max(140).optional().or(z.literal("")),
   hometown: z.string().trim().max(120).optional().or(z.literal("")),
-  avatarUrl: z.string().trim().max(500).optional().or(z.literal("")),
-  resumeUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  avatarUrl: safeUrl(500).optional(),
+  resumeUrl: safeUrl(500).optional(),
   availability: z.string().trim().max(120).optional().or(z.literal("")),
   heroNote: z.string().trim().max(200).optional().or(z.literal("")),
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
   seoDescription: z.string().trim().max(180).optional().or(z.literal("")),
   socials: z
-    .array(z.object({ label: z.string().trim().min(1).max(40), href: z.string().trim().min(1).max(300) }))
+    .array(
+      z.object({
+        label: z.string().trim().min(1).max(40),
+        href: safeUrl(300).refine((value) => value.length > 0, "Add a link"),
+      }),
+    )
     .max(8)
     .optional(),
 });

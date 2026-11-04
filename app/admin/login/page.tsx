@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
-import { getSession } from "@/lib/auth";
+import { getAdminUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
 import { LoginForm } from "@/components/admin/login-form";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
@@ -13,10 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLoginPage() {
-  const [session, settings] = await Promise.all([getSession(), getSettings()]);
-  if (session) redirect("/admin");
-
-  const showDemo = process.env.NODE_ENV !== "production";
+  const [admin, settings] = await Promise.all([getAdminUser(), getSettings()]);
+  if (admin) redirect("/admin");
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">

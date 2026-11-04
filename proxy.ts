@@ -7,10 +7,9 @@ export async function proxy(request: NextRequest) {
   const session = await verifySessionToken(token);
   const isAdmin = session?.role === "ADMIN";
 
+  // Let the login page decide using a database-backed check. Redirecting from
+  // here on token alone can loop when the account has been deleted.
   if (pathname === "/admin/login") {
-    if (isAdmin) {
-      return NextResponse.redirect(new URL("/admin", request.url));
-    }
     return NextResponse.next();
   }
 

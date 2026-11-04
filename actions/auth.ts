@@ -34,23 +34,32 @@ export async function loginAction(
     let user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
 
     // First-run bootstrap: create the owner account from env credentials.
+    // No fallback credentials exist; both values must be configured.
     if (!user) {
-      const adminEmail = (process.env.ADMIN_EMAIL || "admin@kushaldahal.dev").toLowerCase();
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin1234";
-      const anyUser = await prisma.user.count();
-      if (
-        anyUser === 0 &&
-        parsed.data.email === adminEmail &&
-        parsed.data.password === adminPassword
-      ) {
-        user = await prisma.user.create({
-          data: {
-            email: adminEmail,
-            passwordHash: await hashPassword(adminPassword),
-            name: "Kushal Dahal",
-            role: "ADMIN",
-          },
-        });
+      const adminEmail = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+      const adminPassword = process.env.ADMIN_PASSWORD || "";
+      const isProduction = process.env.NODE_ENV === "production";
+      const credentialsUsable =
+        adminEmail.length > 0 &&
+        adminPassword.length > 0 &&
+        (!isProduction || adminPassword.length >= 12);
+
+      if (credentialsUsable) {
+        const anyUser = await prisma.user.count();
+        if (
+          anyUser === 0 &&
+          parsed.data.email === adminEmail &&
+          parsed.data.password === adminPassword
+        ) {
+          user = await prisma.user.create({
+            data: {
+              email: adminEmail,
+              passwordHash: await hashPassword(adminPassword),
+              name: "Kushal Dahal",
+              role: "ADMIN",
+            },
+          });
+        }
       }
     }
 

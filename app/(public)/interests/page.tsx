@@ -10,7 +10,9 @@ import {
   Plane,
   Gamepad2,
   Code2,
+  Goal,
   Sparkles,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -18,11 +20,12 @@ import { interestsFallback } from "@/lib/content";
 import { BentoItem } from "@/components/aceternity/bento-grid";
 import { Reveal } from "@/components/aceternity/reveal";
 import { Badge } from "@/components/ui/badge";
+import { SportingAllegiances } from "@/components/interests/sporting-allegiances";
 
 export const metadata: Metadata = {
   title: "Interests",
   description:
-    "Things Kushal does away from the keyboard: photography, trail running, espresso, reading, open source and synth music.",
+    "Things Kushal does away from the keyboard: photography, trail running, espresso, reading, cricket, football and more.",
   alternates: { canonical: "/interests" },
 };
 
@@ -39,6 +42,8 @@ const iconMap: Record<string, LucideIcon> = {
   plane: Plane,
   gamepad: Gamepad2,
   code: Code2,
+  trophy: Trophy,
+  goal: Goal,
 };
 
 const gradients = [
@@ -118,6 +123,8 @@ export default async function InterestsPage() {
               );
             })}
           </div>
+
+          <SportingAllegiances />
 
           <Reveal className="mt-16 grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-border bg-card p-6">
