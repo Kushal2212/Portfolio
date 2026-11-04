@@ -11,7 +11,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' blob: data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://challenges.cloudflare.com",
+  "connect-src 'self' https://challenges.cloudflare.com https://api.cloudinary.com",
   "frame-src 'self' https://challenges.cloudflare.com",
   "media-src 'self' https:",
   "worker-src 'self' blob:",

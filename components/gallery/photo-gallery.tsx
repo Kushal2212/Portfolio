@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageIcon, Play } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn, formatDate } from "@/lib/utils";
@@ -11,10 +11,15 @@ export type GalleryPhoto = {
   url: string;
   alt: string;
   caption: string | null;
+  mimeType: string;
   width: number | null;
   height: number | null;
   createdAt: string;
 };
+
+function isVideo(photo: GalleryPhoto) {
+  return photo.mimeType.startsWith("video/");
+}
 
 export function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
@@ -91,12 +96,25 @@ export function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
           </DialogHeader>
           {active && (
             <div className="relative overflow-hidden rounded-xl bg-muted">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={active.url}
-                alt={active.alt}
-                className="max-h-[72vh] w-full object-contain"
-              />
+              {isVideo(active) ? (
+                <video
+                  key={active.id}
+                  src={active.url}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="max-h-[72vh] w-full bg-black object-contain"
+                />
+              ) : (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={active.url}
+                    alt={active.alt}
+                    className="max-h-[72vh] w-full object-contain"
+                  />
+                </>
+              )}
             </div>
           )}
           <div className="flex flex-wrap items-end justify-between gap-3 px-1 pb-1">
@@ -161,6 +179,7 @@ function PhotoButton({
 }) {
   const ratio =
     photo.width && photo.height ? `${photo.width} / ${photo.height}` : undefined;
+  const video = isVideo(photo);
 
   return (
     <button
@@ -170,19 +189,41 @@ function PhotoButton({
         "group relative block overflow-hidden rounded-2xl border border-border bg-muted text-left",
         className,
       )}
-      aria-label={`Open photo ${index + 1}${photo.caption ? `: ${photo.caption}` : ""}`}
+      aria-label={`Open ${video ? "video" : "photo"} ${index + 1}${photo.caption ? `: ${photo.caption}` : ""}`}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={photo.url}
-        alt={photo.alt}
-        loading={priority ? "eager" : "lazy"}
-        style={!imageClassName && ratio ? { aspectRatio: ratio } : undefined}
-        className={cn(
-          "w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]",
-          imageClassName,
-        )}
-      />
+      {video ? (
+        <>
+          <video
+            src={`${photo.url}#t=0.1`}
+            muted
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+            style={!imageClassName && ratio ? { aspectRatio: ratio } : undefined}
+            className={cn(
+              "w-full bg-black object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]",
+              imageClassName,
+            )}
+          />
+          <span className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-white/85 backdrop-blur-sm">
+            <Play className="size-2.5 fill-current" /> Video
+          </span>
+        </>
+      ) : (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photo.url}
+            alt={photo.alt}
+            loading={priority ? "eager" : "lazy"}
+            style={!imageClassName && ratio ? { aspectRatio: ratio } : undefined}
+            className={cn(
+              "w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.015]",
+              imageClassName,
+            )}
+          />
+        </>
+      )}
       <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-90" />
       {photo.caption && (
         <span className="pointer-events-none absolute inset-x-0 bottom-0 p-4 text-sm text-white/90 sm:p-5">

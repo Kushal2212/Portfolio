@@ -62,6 +62,12 @@ export const interestSchema = z.object({
   icon: z.string().trim().max(40).optional().or(z.literal("")),
 });
 
+export const testimonialSchema = z.object({
+  quote: z.string().trim().min(10, "Add the testimonial text").max(600),
+  name: z.string().trim().min(2, "Add a name").max(80),
+  role: z.string().trim().max(120).optional().or(z.literal("")),
+});
+
 export const musicSchema = z.object({
   title: z.string().trim().min(1, "Add a title").max(140),
   artist: z.string().trim().min(1, "Add an artist").max(140),

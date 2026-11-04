@@ -1,8 +1,16 @@
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/aceternity/reveal";
-import { testimonials } from "@/lib/content";
+import { initials } from "@/lib/utils";
 
-export function Testimonials() {
+export type TestimonialItem = {
+  quote: string;
+  name: string;
+  role: string;
+};
+
+export function Testimonials({ items }: { items: TestimonialItem[] }) {
+  if (items.length === 0) return null;
+
   return (
     <section className="border-t border-border bg-surface/50 py-20 md:py-28">
       <div className="container-page">
@@ -17,15 +25,15 @@ export function Testimonials() {
         />
 
         <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <Reveal key={testimonial.name} delay={index * 0.06}>
+          {items.map((testimonial, index) => (
+            <Reveal key={`${testimonial.name}-${index}`} delay={index * 0.06}>
               <figure className="flex h-full flex-col rounded-2xl border border-border bg-card p-6">
                 <blockquote className="text-sm leading-relaxed text-foreground/85">
                   &ldquo;{testimonial.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-auto flex items-center gap-3 border-t border-border/70 pt-5">
                   <span className="flex size-9 items-center justify-center rounded-full bg-brand-strong/40 font-mono text-[10px] font-semibold text-foreground">
-                    {testimonial.initials}
+                    {initials(testimonial.name)}
                   </span>
                   <span>
                     <span className="block text-xs font-semibold">{testimonial.name}</span>

@@ -28,8 +28,12 @@ export default async function PhotosPage() {
   const photos: GalleryPhoto[] = media.map((item) => ({
     id: item.id,
     url: item.url,
-    alt: item.altText || item.caption || `Photograph by ${settings.fullName}`,
+    alt:
+      item.altText ||
+      item.caption ||
+      `${item.mimeType.startsWith("video/") ? "Video" : "Photograph"} by ${settings.fullName}`,
     caption: item.caption,
+    mimeType: item.mimeType,
     width: item.width,
     height: item.height,
     createdAt: item.createdAt.toISOString(),
@@ -56,7 +60,7 @@ export default async function PhotosPage() {
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <Camera className="size-3.5 text-brand" /> {photos.length}{" "}
-              {photos.length === 1 ? "photo" : "photos"}
+              {photos.length === 1 ? "frame" : "frames"}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <MapPin className="size-3.5" /> {settings.hometown}

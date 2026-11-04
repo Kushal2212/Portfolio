@@ -10,6 +10,7 @@ import {
   FileImage,
   ImageIcon,
   Loader2,
+  Play,
   Search,
   Square,
   Trash2,
@@ -47,9 +48,19 @@ type MediaItem = {
   createdAt: string;
 };
 
-const ACCEPT = "image/jpeg,image/png,image/webp,image/svg+xml";
+const ACCEPT = "image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime";
 
-export function MediaManager({ media }: { media: MediaItem[] }) {
+function isVideo(item: { mimeType: string }) {
+  return item.mimeType.startsWith("video/");
+}
+
+export function MediaManager({
+  media,
+  cloudinaryEnabled,
+}: {
+  media: MediaItem[];
+  cloudinaryEnabled: boolean;
+}) {
   const router = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = React.useState(false);
@@ -66,6 +77,56 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = React.useState<string[] | null>(null);
   const [busy, setBusy] = React.useState(false);
+
+  async function uploadVideoDirect(file: File) {
+    const signResponse = await fetch("/api/upload/sign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filename: file.name }),
+    });
+    const sign = (await signResponse.json()) as {
+      id?: string;
+      uploadUrl?: string;
+      fields?: Record<string, string>;
+      error?: string;
+    };
+    if (!signResponse.ok || !sign.id || !sign.uploadUrl || !sign.fields) {
+      throw new Error(sign.error || "Could not prepare the video upload.");
+    }
+
+    const body = new FormData();
+    body.append("file", file);
+    for (const [key, value] of Object.entries(sign.fields)) body.append(key, value);
+
+    const uploadResponse = await fetch(sign.uploadUrl, { method: "POST", body });
+    const uploaded = (await uploadResponse.json()) as {
+      public_id?: string;
+      bytes?: number;
+      width?: number;
+      height?: number;
+      error?: { message?: string };
+    };
+    if (!uploadResponse.ok || !uploaded.public_id) {
+      throw new Error(uploaded.error?.message || "Cloudinary rejected the video.");
+    }
+
+    const completeResponse = await fetch("/api/upload/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: sign.id,
+        publicId: uploaded.public_id,
+        bytes: uploaded.bytes,
+        width: uploaded.width,
+        height: uploaded.height,
+        published: uploadToGallery,
+      }),
+    });
+    const complete = (await completeResponse.json()) as { error?: string };
+    if (!completeResponse.ok) {
+      throw new Error(complete.error || "Could not save the video.");
+    }
+  }
 
   const filtered = React.useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -88,8 +149,19 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
 
     for (const file of list) {
       setUploadProgress(`Uploading ${file.name}…`);
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} is larger than 5 MB`);
+      const video = file.type.startsWith("video/");
+      const limit = video ? 100 * 1024 * 1024 : 5 * 1024 * 1024;
+      if (file.size > limit) {
+        toast.error(`${file.name} is larger than ${video ? "100 MB" : "5 MB"}`);
+        continue;
+      }
+      if (video && cloudinaryEnabled) {
+        try {
+          await uploadVideoDirect(file);
+          success += 1;
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : `Could not upload ${file.name}`);
+        }
         continue;
       }
       const form = new FormData();
@@ -113,8 +185,8 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
     if (success > 0) {
       toast.success(
         uploadToGallery
-          ? `${success} photo${success === 1 ? "" : "s"} uploaded to the gallery`
-          : `${success} image${success === 1 ? "" : "s"} uploaded`,
+          ? `${success} ${success === 1 ? "file" : "files"} uploaded to the gallery`
+          : `${success} ${success === 1 ? "file" : "files"} uploaded`,
       );
       router.refresh();
     }
@@ -154,7 +226,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
       toast.error(result.error);
       return;
     }
-    toast.success(published ? "Saved and shown in the gallery" : "Image details saved");
+    toast.success(published ? "Saved and shown in the gallery" : "Media details saved");
     setActive(null);
     router.refresh();
   }
@@ -168,7 +240,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
       toast.error(result.error);
       return;
     }
-    toast.success(pendingDelete.length > 1 ? "Images deleted" : "Image deleted");
+    toast.success(pendingDelete.length > 1 ? "Assets deleted" : "Asset deleted");
     setSelected((current) => current.filter((id) => !pendingDelete.includes(id)));
     setPendingDelete(null);
     setActive(null);
@@ -208,10 +280,10 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
           {uploading ? <Loader2 className="size-5 animate-spin" /> : <CloudUpload className="size-5" />}
         </span>
         <p className="mt-3 text-sm font-medium">
-          {uploading ? uploadProgress || "Uploading…" : "Drop images here"}
+          {uploading ? uploadProgress || "Uploading…" : "Drop images or videos here"}
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          JPG, PNG, WebP or SVG · up to 5 MB each · multiple files supported
+          JPG, PNG, WebP, MP4, WebM or MOV · images up to 5 MB · videos up to 100 MB
         </p>
         <label className="mt-4 flex items-center gap-2.5 rounded-full border border-border bg-background/60 px-3 py-1.5 text-[11px]">
           <Switch
@@ -269,10 +341,10 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
               <ImageIcon className="size-5" />
             </span>
             <p className="mt-4 text-sm font-medium">
-              {media.length === 0 ? "The library is empty" : "No images match that search"}
+              {media.length === 0 ? "The library is empty" : "No media match that search"}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {media.length === 0 ? "Drop a few images above to get started." : "Try a different term."}
+              {media.length === 0 ? "Drop a few files above to get started." : "Try a different term."}
             </p>
           </div>
         ) : (
@@ -297,13 +369,29 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
                   className="block aspect-[4/3] w-full"
                   aria-label={`Open ${item.filename}`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.url}
-                    alt={item.altText ?? item.filename}
-                    loading="lazy"
-                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {isVideo(item) ? (
+                    <div className="relative size-full bg-black">
+                      <video
+                        src={`${item.url}#t=0.1`}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        aria-hidden="true"
+                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <span className="pointer-events-none absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm">
+                        <Play className="size-2 fill-current" /> Video
+                      </span>
+                    </div>
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={item.url}
+                      alt={item.altText ?? item.filename}
+                      loading="lazy"
+                      className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  )}
                 </button>
 
                 <button
@@ -333,7 +421,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
                     type="button"
                     onClick={() => setPendingDelete([item.id])}
                     className="flex size-6 items-center justify-center rounded-md bg-black/40 text-white backdrop-blur transition-colors hover:bg-destructive"
-                    aria-label="Delete image"
+                    aria-label="Delete media"
                   >
                     <X className="size-3" />
                   </button>
@@ -376,8 +464,23 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
           {active && (
             <>
               <div className="overflow-hidden rounded-lg border border-border bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={active.url} alt={active.altText ?? active.filename} className="max-h-[320px] w-full object-contain" />
+                {isVideo(active) ? (
+                  <video
+                    key={active.id}
+                    src={active.url}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="max-h-[320px] w-full bg-black object-contain"
+                  />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={active.url}
+                    alt={active.altText ?? active.filename}
+                    className="max-h-[320px] w-full object-contain"
+                  />
+                )}
               </div>
               <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
                 <Badge variant="outline">{active.mimeType.split("/")[1]?.toUpperCase()}</Badge>
@@ -393,7 +496,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
                   id="alt"
                   value={altText}
                   onChange={(event) => setAltText(event.target.value)}
-                  placeholder="Describe the image for screen readers"
+                  placeholder="Describe the image or video for screen readers"
                   className="h-9 text-xs"
                 />
               </div>
@@ -409,7 +512,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
                   className="h-9 text-xs"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Optional. Appears under the photo on the public gallery.
+                  Optional. Appears under the item on the public gallery.
                 </p>
               </div>
               <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2.5">
@@ -418,7 +521,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
                     Show in gallery
                   </Label>
                   <p className="mt-0.5 text-[10px] text-muted-foreground">
-                    Published images appear on /photos within a minute.
+                    Published media appear on /photos within a minute.
                   </p>
                 </div>
                 <Switch id="published" checked={published} onCheckedChange={setPublished} />
@@ -448,7 +551,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete {pendingDelete?.length === 1 ? "this image" : `${pendingDelete?.length} images`}?
+              Delete {pendingDelete?.length === 1 ? "this asset" : `${pendingDelete?.length} assets`}?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Files are removed from the server and any blog post using them will lose its cover.

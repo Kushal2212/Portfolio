@@ -39,6 +39,7 @@ type UploadInput = {
   mimeType: string;
   publicId: string;
   folder?: string;
+  resourceType?: "image" | "video";
 };
 
 export type CloudinaryUpload = {
@@ -49,11 +50,48 @@ export type CloudinaryUpload = {
   bytes: number;
 };
 
+/**
+ * Videos are delivered through a compression transformation (`q_auto:good`)
+ * capped at 1920px wide and converted to MP4, so the stored original is never
+ * sent to visitors. Cloudinary caches the derived asset at the CDN edge.
+ */
+export function compressedVideoUrl(publicId: string) {
+  const settings = config();
+  if (!settings) return null;
+  return `https://res.cloudinary.com/${settings.cloudName}/video/upload/w_1920,c_limit,q_auto:good/${publicId}.mp4`;
+}
+
+/**
+ * Signed parameters for a direct browser-to-Cloudinary video upload. Keeping
+ * the file out of the Next.js request avoids serverless body-size limits, and
+ * the API secret never reaches the client.
+ */
+export function videoUploadParams(id: string) {
+  const settings = config();
+  if (!settings) return null;
+
+  const folder = "portfolio";
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signature = sign({ folder, public_id: id, timestamp }, settings.apiSecret);
+
+  return {
+    uploadUrl: `https://api.cloudinary.com/v1_1/${settings.cloudName}/video/upload`,
+    fields: {
+      api_key: settings.apiKey,
+      timestamp: String(timestamp),
+      folder,
+      public_id: id,
+      signature,
+    },
+  };
+}
+
 export async function uploadToCloudinary({
   buffer,
   mimeType,
   publicId,
   folder = "portfolio",
+  resourceType = "image",
 }: UploadInput): Promise<CloudinaryUpload | null> {
   const settings = config();
   if (!settings) return null;
@@ -70,7 +108,7 @@ export async function uploadToCloudinary({
   form.append("signature", signature);
 
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${settings.cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${settings.cloudName}/${resourceType}/upload`,
     { method: "POST", body: form },
   );
 
@@ -96,7 +134,10 @@ export async function uploadToCloudinary({
   };
 }
 
-export async function deleteFromCloudinary(publicId: string) {
+export async function deleteFromCloudinary(
+  publicId: string,
+  resourceType: "image" | "video" = "image",
+) {
   const settings = config();
   if (!settings) return;
 
@@ -110,7 +151,7 @@ export async function deleteFromCloudinary(publicId: string) {
   form.append("signature", signature);
 
   const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${settings.cloudName}/image/destroy`,
+    `https://api.cloudinary.com/v1_1/${settings.cloudName}/${resourceType}/destroy`,
     { method: "POST", body: form },
   );
 

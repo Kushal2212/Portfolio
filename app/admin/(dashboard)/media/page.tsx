@@ -18,11 +18,12 @@ export default async function AdminMediaPage() {
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title="Photos & media"
-        description={`${media.length} images · ${published} in the public gallery · ${(totalBytes / 1024 / 1024).toFixed(1)} MB · ${
+        description={`${media.length} files · ${published} in the public gallery · ${(totalBytes / 1024 / 1024).toFixed(1)} MB · ${
           isCloudinaryConfigured() ? "stored on Cloudinary" : "stored locally in /public/uploads"
         }`}
       />
       <MediaManager
+        cloudinaryEnabled={isCloudinaryConfigured()}
         media={media.map((item) => ({
           id: item.id,
           url: item.url,

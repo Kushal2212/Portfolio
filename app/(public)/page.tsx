@@ -9,16 +9,21 @@ import { ContactCTA } from "@/components/sections/contact-cta";
 import { getSettings } from "@/lib/settings";
 import { getRecentPosts } from "@/lib/posts";
 import { getPublishedTracks } from "@/lib/music";
+import { getPublicTestimonials } from "@/lib/testimonials";
+import { testimonials as testimonialsFallback } from "@/lib/content";
 import { absoluteUrl } from "@/lib/utils";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [settings, posts, tracks] = await Promise.all([
+  const [settings, posts, tracks, testimonialRows] = await Promise.all([
     getSettings(),
     getRecentPosts(3),
     getPublishedTracks(3),
+    getPublicTestimonials(),
   ]);
+
+  const testimonials = testimonialRows ?? testimonialsFallback;
 
   const personSchema = {
     "@context": "https://schema.org",
@@ -50,7 +55,7 @@ export default async function HomePage() {
       <FeaturedProjects />
       <LatestPosts posts={posts} />
       <Listening tracks={tracks} />
-      <Testimonials />
+      <Testimonials items={testimonials} />
       <ContactCTA settings={settings} />
     </>
   );

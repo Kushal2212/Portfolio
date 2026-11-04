@@ -79,6 +79,19 @@ model Track {
   @@index([published, order])
 }
 
+model Testimonial {
+  id        String   @id @default(cuid()) @map("_id")
+  quote     String
+  name      String
+  role      String?
+  published Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, order])
+}
+
 model Message {
   id        String   @id @default(cuid()) @map("_id")
   name      String

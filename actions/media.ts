@@ -44,7 +44,10 @@ export async function deleteMediaAction(ids: string[]): Promise<Result> {
 
     for (const item of media) {
       if (item.publicId) {
-        await deleteFromCloudinary(item.publicId).catch((error) => {
+        await deleteFromCloudinary(
+          item.publicId,
+          item.mimeType.startsWith("video/") ? "video" : "image",
+        ).catch((error) => {
           console.error("Could not remove Cloudinary asset", item.publicId, error);
         });
       } else if (item.url.startsWith("/uploads/")) {
