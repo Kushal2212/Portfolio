@@ -1,0 +1,110 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 5 0 R /F2 6 0 R /F3 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 6824 >>
+stream
+BT /F2 25 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 779.89 Tm (KUSHAL DAHAL) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 468.56 781.89 Tm (Kathmandu, Nepal) Tj ET
+BT /F3 11.5 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 762.89 Tm (Full-stack engineer & interaction designer) Tj ET
+BT /F1 8.8 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 745.89 Tm (hello@kushaldahal.dev  |  kushaldahal.dev  |  github.com/kushaldahal  |  linkedin.com/in/kushaldahal) Tj ET
+0.44 0.65 0.12 RG 2 w 54 732.89 m 541.28 732.89 l S
+BT /F1 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 710.89 Tm (I build calm, fast product interfaces end to end: data model, API, design system and the last 10% of) Tj ET
+BT /F1 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 697.89 Tm (polish. Eight years across startups and studios, mostly with TypeScript, React, Next.js and) Tj ET
+BT /F1 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 684.89 Tm (PostgreSQL. I care about accessibility, performance budgets and motion that earns its place.) Tj ET
+BT /F2 8.4 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 659.89 Tm (EXPERIENCE) Tj ET
+0.86 0.85 0.82 RG 0.7 w 54 654.89 m 541.28 654.89 l S
+BT /F2 10.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 640.89 Tm (Independent product engineer) Tj ET
+BT /F1 8.8 Tf 0.38 0.37 0.35 rg 1 0 0 1 479.06 640.89 Tm (2022 - Present) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 628.39 Tm (Studio practice - Kathmandu / remote) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 615.89 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 615.89 Tm (Design and ship full-stack products for small teams: Next.js App Router front ends, PostgreSQL data) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 603.49 Tm (models, auth, billing and deployment.) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 591.09 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 591.09 Tm (Built and maintain Lumen UI, an open-source component library with 2.1k GitHub stars and 40k monthly) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 578.69 Tm (npm downloads.) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 566.29 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 566.29 Tm (Lead interface work for Atlas, a trail-planning app used by 12k hikers; cut time-to-first-route from) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 553.89 Tm (48s to 9s.) Tj ET
+BT /F2 10.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 536.49 Tm (Senior frontend engineer) Tj ET
+BT /F1 8.8 Tf 0.38 0.37 0.35 rg 1 0 0 1 492.40 536.49 Tm (2020 - 2022) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 523.99 Tm (Lumen Labs) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 511.49 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 511.49 Tm (Owned the design system and marketing site; introduced visual regression tests and a token pipeline) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 499.09 Tm (adopted by four product teams.) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 486.69 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 486.69 Tm (Rebuilt the analytics dashboard in React and Recharts, reducing initial bundle size by 38% and) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 474.29 Tm (improving LCP from 3.4s to 1.6s.) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 461.89 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 461.89 Tm (Mentored three engineers and ran a fortnightly interface critique that became a company ritual.) Tj ET
+BT /F2 10.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 444.49 Tm (Frontend engineer) Tj ET
+BT /F1 8.8 Tf 0.38 0.37 0.35 rg 1 0 0 1 492.40 444.49 Tm (2018 - 2020) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 431.99 Tm (Himalayan Digital) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 419.49 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 419.49 Tm (Delivered responsive commerce and editorial sites for regional clients, from Figma handoff to) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 407.09 Tm (production monitoring.) Tj ET
+BT /F1 9.2 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 394.69 Tm (-) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 394.69 Tm (Created the agency's accessibility checklist and trained the team on keyboard and screen-reader) Tj ET
+BT /F1 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 65.00 382.29 Tm (testing.) Tj ET
+BT /F2 8.4 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 359.89 Tm (SELECTED WORK) Tj ET
+0.86 0.85 0.82 RG 0.7 w 54 354.89 m 541.28 354.89 l S
+BT /F2 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 340.89 Tm (Lumen UI) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 340.89 Tm (Open-source React component library. Headless primitives, accessible defaults, 2.1k) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 329.39 Tm (stars.) Tj ET
+BT /F2 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 313.89 Tm (Atlas) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 313.89 Tm (Trail planning for the Himalaya. Offline-first maps, elevation profiles, shareable) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 302.39 Tm (routes.) Tj ET
+BT /F2 9.4 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 286.89 Tm (This portfolio) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 286.89 Tm (Next.js 16, Prisma, custom auth and a small analytics pipeline. Built to be read,) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 164.00 275.39 Tm (not just viewed.) Tj ET
+BT /F2 8.4 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 255.89 Tm (SKILLS) Tj ET
+0.86 0.85 0.82 RG 0.7 w 54 250.89 m 541.28 250.89 l S
+BT /F2 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 236.89 Tm (Product) Tj ET
+BT /F1 9.1 Tf 0.12 0.11 0.1 rg 1 0 0 1 124.00 236.89 Tm (TypeScript, React, Next.js, Tailwind CSS, Framer Motion, accessibility) Tj ET
+BT /F2 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 223.39 Tm (Backend) Tj ET
+BT /F1 9.1 Tf 0.12 0.11 0.1 rg 1 0 0 1 124.00 223.39 Tm (Node.js, PostgreSQL, Prisma, REST, tRPC, auth, background jobs) Tj ET
+BT /F2 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 209.89 Tm (Craft) Tj ET
+BT /F1 9.1 Tf 0.12 0.11 0.1 rg 1 0 0 1 124.00 209.89 Tm (Design systems, prototyping, typography, motion, performance budgets) Tj ET
+BT /F2 9.2 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 196.39 Tm (Tools) Tj ET
+BT /F1 9.1 Tf 0.12 0.11 0.1 rg 1 0 0 1 124.00 196.39 Tm (Figma, Git, Vercel, Playwright, Vitest, Sentry, Linear) Tj ET
+BT /F2 8.4 Tf 0.44 0.65 0.12 rg 1 0 0 1 54.00 176.89 Tm (EDUCATION) Tj ET
+0.86 0.85 0.82 RG 0.7 w 54 171.89 m 541.28 171.89 l S
+BT /F2 9.6 Tf 0.12 0.11 0.1 rg 1 0 0 1 54.00 157.89 Tm (B.Sc. Computer Science) Tj ET
+BT /F1 8.8 Tf 0.38 0.37 0.35 rg 1 0 0 1 492.40 157.89 Tm (2014 - 2018) Tj ET
+BT /F1 9 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 145.89 Tm (Tribhuvan University, Kathmandu) Tj ET
+0.86 0.85 0.82 RG 0.7 w 54 779.89 m 541.28 779.89 l S
+BT /F1 8.2 Tf 0.38 0.37 0.35 rg 1 0 0 1 54.00 765.89 Tm (References and a longer case-study deck available on request.) Tj ET
+BT /F1 8.2 Tf 0.38 0.37 0.35 rg 1 0 0 1 479.16 765.89 Tm (kushaldahal.dev) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000267 00000 n 
+0000007143 00000 n 
+0000007240 00000 n 
+0000007342 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+7447
+%%EOF

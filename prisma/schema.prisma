@@ -1,0 +1,141 @@
+// Prisma schema — MongoDB. Set DATABASE_URL to a MongoDB connection string that
+// includes the database name, e.g. ...mongodb.net/portfolio. Tags are stored as
+// a String[] on Post because MongoDB does not support implicit many-to-many
+// relations.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid()) @map("_id")
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Post {
+  id          String   @id @default(cuid()) @map("_id")
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  status      String   @default("DRAFT") // DRAFT | PUBLISHED | SCHEDULED
+  views       Int      @default(0)
+  featured    Boolean  @default(false)
+  readingTime Int      @default(1)
+  seoTitle    String?
+  seoDesc     String?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tags        String[]
+
+  @@index([status, publishedAt])
+}
+
+model Media {
+  id        String   @id @default(cuid()) @map("_id")
+  url       String
+  publicId  String?
+  filename  String
+  altText   String?
+  caption   String?
+  published Boolean  @default(false)
+  order     Int      @default(0)
+  size      Int
+  width     Int?
+  height    Int?
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([published, order])
+}
+
+model Track {
+  id        String   @id @default(cuid()) @map("_id")
+  title     String
+  artist    String
+  album     String?
+  year      Int?
+  coverUrl  String?
+  link      String?
+  note      String?
+  published Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, order])
+}
+
+model Message {
+  id        String   @id @default(cuid()) @map("_id")
+  name      String
+  email     String
+  subject   String?
+  phone     String?
+  body      String
+  status    String   @default("UNREAD") // UNREAD | READ | REPLIED | ARCHIVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model Visit {
+  id        String   @id @default(cuid()) @map("_id")
+  visitorId String
+  path      String
+  referrer  String?
+  country   String?
+  city      String?
+  device    String?
+  browser   String?
+  os        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([visitorId])
+  @@index([path])
+}
+
+model Interest {
+  id          String  @id @default(cuid()) @map("_id")
+  title       String
+  description String
+  icon        String?
+  image       String?
+  order       Int     @default(0)
+}
+
+model SiteSettings {
+  id           String  @id @default("singleton") @map("_id")
+  fullName     String  @default("Kushal Dahal")
+  title        String  @default("Full-Stack Engineer & Interaction Designer")
+  tagline      String?
+  bio          String?
+  email        String?
+  phone        String?
+  location     String?
+  education    String?
+  hometown     String?
+  avatarUrl    String?
+  resumeUrl    String?
+  socials      String? // JSON: [{ "label": "GitHub", "href": "..." }]
+  availability String?
+  heroNote     String?
+  seoTitle     String?
+  seoDescription String?
+  updatedAt    DateTime @updatedAt
+}
