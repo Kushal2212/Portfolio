@@ -128,8 +128,8 @@ export function ProjectsManager({
       toast.error("Use a JPG, PNG or WebP image.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Images must be 5 MB or smaller.");
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error("Images must be 4 MB or smaller.");
       return;
     }
 
@@ -481,7 +481,7 @@ export function ProjectsManager({
                 <div>
                   <p className="text-xs font-medium">Cover photo</p>
                   <p className="mt-0.5 text-[10px] text-muted-foreground">
-                    JPG, PNG or WebP up to 5 MB. A generated cover is used when this is empty.
+                    JPG, PNG or WebP up to 4 MB. A generated cover is used when this is empty.
                   </p>
                 </div>
                 {coverImage && (

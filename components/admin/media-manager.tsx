@@ -150,9 +150,9 @@ export function MediaManager({
     for (const file of list) {
       setUploadProgress(`Uploading ${file.name}…`);
       const video = file.type.startsWith("video/");
-      const limit = video ? 100 * 1024 * 1024 : 5 * 1024 * 1024;
+      const limit = video ? 100 * 1024 * 1024 : 4 * 1024 * 1024;
       if (file.size > limit) {
-        toast.error(`${file.name} is larger than ${video ? "100 MB" : "5 MB"}`);
+        toast.error(`${file.name} is larger than ${video ? "100 MB" : "4 MB"}`);
         continue;
       }
       if (video && cloudinaryEnabled) {
@@ -283,7 +283,7 @@ export function MediaManager({
           {uploading ? uploadProgress || "Uploading…" : "Drop images or videos here"}
         </p>
         <p className="mt-1 text-[11px] text-muted-foreground">
-          JPG, PNG, WebP, MP4, WebM or MOV · images up to 5 MB · videos up to 100 MB
+          JPG, PNG, WebP, MP4, WebM or MOV · images up to 4 MB · videos up to 100 MB
         </p>
         <label className="mt-4 flex items-center gap-2.5 rounded-full border border-border bg-background/60 px-3 py-1.5 text-[11px]">
           <Switch

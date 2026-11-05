@@ -29,7 +29,7 @@ const VIDEO_EXTENSIONS: Record<string, string> = {
   "video/webm": "webm",
   "video/quicktime": "mov",
 };
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 const MAX_DIMENSION = 4096;
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       {
         error: isVideo
           ? "Videos must be 100 MB or smaller."
-          : "Images must be 5 MB or smaller.",
+          : "Images must be 4 MB or smaller.",
       },
       { status: 400 },
     );

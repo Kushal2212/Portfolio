@@ -188,7 +188,7 @@ proxy.ts           Route protection for /admin/*
   path, referrer, coarse device/browser/OS and optional Vercel country headers —
   no raw IP addresses. The tracker skips admin routes and the owner's session,
   and respects the cookie banner's "Essential only" choice.
-- **Media.** Photo uploads accept JPG, PNG and WebP up to 5 MB. SVG is rejected
+- **Media.** Photo uploads accept JPG, PNG and WebP up to 4 MB. SVG is rejected
   because it is an active document format. Every photo is decoded and re-encoded
   with `sharp` to WebP at a maximum of 4096px, which validates the bytes and
   strips EXIF/GPS metadata. Videos (MP4, WebM, MOV) up to 100 MB are uploaded
