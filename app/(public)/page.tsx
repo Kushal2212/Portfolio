@@ -10,20 +10,29 @@ import { getSettings } from "@/lib/settings";
 import { getRecentPosts } from "@/lib/posts";
 import { getPublishedTracks } from "@/lib/music";
 import { getPublicTestimonials } from "@/lib/testimonials";
-import { testimonials as testimonialsFallback } from "@/lib/content";
+import { getPublicProjects } from "@/lib/projects";
+import {
+  projects as projectsFallback,
+  testimonials as testimonialsFallback,
+} from "@/lib/content";
 import { absoluteUrl } from "@/lib/utils";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [settings, posts, tracks, testimonialRows] = await Promise.all([
+  const [settings, posts, tracks, testimonialRows, projectRows] = await Promise.all([
     getSettings(),
     getRecentPosts(3),
     getPublishedTracks(3),
     getPublicTestimonials(),
+    getPublicProjects(),
   ]);
 
   const testimonials = testimonialRows ?? testimonialsFallback;
+  const projects = projectRows ?? projectsFallback;
+  const githubUrl = settings.socials.find(
+    (social) => social.label.toLowerCase() === "github",
+  )?.href;
 
   const personSchema = {
     "@context": "https://schema.org",
@@ -52,7 +61,7 @@ export default async function HomePage() {
       <Hero settings={settings} />
       <SkillsMarquee />
       <PersonalDetails settings={settings} />
-      <FeaturedProjects />
+      <FeaturedProjects items={projects} githubUrl={githubUrl} />
       <LatestPosts posts={posts} />
       <Listening tracks={tracks} />
       <Testimonials items={testimonials} />

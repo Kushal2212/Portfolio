@@ -61,7 +61,7 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: "orbit",
+    slug: "Cardamom",
     name: "Orbit Analytics",
     year: "2025",
     summary: "A small, privacy-first analytics tool I use on my own sites.",

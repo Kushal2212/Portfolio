@@ -1,13 +1,33 @@
 import Link from "next/link";
-import { ArrowUpRight, Github } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/aceternity/reveal";
 import { CoverArt } from "@/components/shared/cover-art";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { projects } from "@/lib/content";
 
-export function FeaturedProjects() {
+export type ProjectCard = {
+  slug: string;
+  name: string;
+  year: string;
+  summary: string;
+  tags: string[];
+  href?: string | null;
+  repo?: string | null;
+  metric?: string | null;
+  metricLabel?: string | null;
+  status: string;
+};
+
+export function FeaturedProjects({
+  items,
+  githubUrl,
+}: {
+  items: ProjectCard[];
+  githubUrl?: string;
+}) {
+  if (items.length === 0) return null;
+
   return (
     <section className="section-pad relative overflow-hidden border-t border-border">
       <div className="container-page">
@@ -20,16 +40,18 @@ export function FeaturedProjects() {
           }
           description="Small products and side projects, mostly built to answer a question I had. More is available on request."
           action={
-            <Button asChild variant="outline" className="rounded-full">
-              <a href="https://github.com" target="_blank" rel="noreferrer noopener">
-                <Github className="size-4" /> More on GitHub
-              </a>
-            </Button>
+            githubUrl ? (
+              <Button asChild variant="outline" className="rounded-full">
+                <a href={githubUrl} target="_blank" rel="noreferrer noopener">
+                  <Github className="size-4" /> More on GitHub
+                </a>
+              </Button>
+            ) : undefined
           }
         />
 
         <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project, index) => (
+          {items.map((project, index) => (
             <Reveal key={project.slug} delay={index * 0.06}>
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-500 hover:border-brand/25">
                 <div className="relative aspect-[16/10] overflow-hidden">
@@ -46,10 +68,14 @@ export function FeaturedProjects() {
                     <span className="rounded-full bg-black/30 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-white/80 backdrop-blur-md">
                       {project.year}
                     </span>
-                    <span className="text-right">
-                      <span className="block text-base font-semibold leading-none text-white">{project.metric}</span>
-                      <span className="mt-1 block text-[9px] uppercase tracking-wider text-white/60">{project.metricLabel}</span>
-                    </span>
+                    {project.metric && (
+                      <span className="text-right">
+                        <span className="block text-base font-semibold leading-none text-white">{project.metric}</span>
+                        {project.metricLabel && (
+                          <span className="mt-1 block text-[9px] uppercase tracking-wider text-white/60">{project.metricLabel}</span>
+                        )}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -77,17 +103,30 @@ export function FeaturedProjects() {
                       Ask about this project
                       <ArrowUpRight className="size-3.5" />
                     </Link>
-                    {project.repo && (
-                      <a
-                        href={project.repo}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        aria-label={`${project.name} on GitHub`}
-                        className="text-muted-foreground transition-colors hover:text-foreground"
-                      >
-                        <Github className="size-4" />
-                      </a>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {project.href && project.href !== "#" && (
+                        <a
+                          href={project.href}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-foreground/70 transition-colors hover:text-brand"
+                        >
+                          Visit
+                          <ExternalLink className="size-3" />
+                        </a>
+                      )}
+                      {project.repo && (
+                        <a
+                          href={project.repo}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          aria-label={`${project.name} on GitHub`}
+                          className="text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <Github className="size-4" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </article>

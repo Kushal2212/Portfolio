@@ -92,6 +92,26 @@ model Testimonial {
   @@index([published, order])
 }
 
+model Project {
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
+  slug        String   @unique
+  year        String
+  summary     String
+  tags        String[]
+  href        String?
+  repo        String?
+  metric      String?
+  metricLabel String?
+  status      String   @default("Live")
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published, order])
+}
+
 model Message {
   id        String   @id @default(cuid()) @map("_id")
   name      String

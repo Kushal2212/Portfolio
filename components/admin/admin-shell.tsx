@@ -8,6 +8,7 @@ import {
   ArrowUpRight,
   ChevronLeft,
   FileText,
+  FolderKanban,
   Images,
   LayoutDashboard,
   LogOut,
@@ -45,6 +46,7 @@ const nav = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, group: "Workspace" },
   { href: "/admin/blog", label: "Blog posts", icon: FileText, group: "Content" },
   { href: "/admin/music", label: "Music", icon: Music2, group: "Content" },
+  { href: "/admin/projects", label: "Projects", icon: FolderKanban, group: "Content" },
   {
     href: "/admin/testimonials",
     label: "Testimonials",

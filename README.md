@@ -64,13 +64,16 @@ database name before any query string, e.g.
 ### Public site
 
 - Landing page with animated hero, skills marquee, personal bento, selected
-  projects, latest writing, testimonials and contact call-to-action.
+  projects, latest writing, testimonials and contact call-to-action. Projects and
+  testimonials are managed from the admin panel and fall back to built-in copy
+  until the first entry is added.
 - About and Interests pages backed by real content.
 - Listening page at `/music`: an admin-curated grid of albums, tracks and
   playlists with cover art, notes and optional listen links. Three recent picks
   also appear on the homepage.
-- Photo gallery at `/photos`: published images from the media library open in a
-  calm lightbox with captions and keyboard navigation.
+- Photo gallery at `/photos`: published photos and compressed MP4/WebM videos
+  from the media library open in a calm lightbox with captions and keyboard
+  navigation.
 - Blog index with full-text search, tag filters, pagination and a featured post.
 - Blog post page with table of contents, reading progress, generated cover art,
   view counts, share/copy-link buttons and related posts.
@@ -91,10 +94,16 @@ database name before any query string, e.g.
 - Markdown editor with live preview, local autosave, cover/media picker, tags,
   SEO fields, draft/published/scheduled states and featured toggle.
 - Media library: drag-and-drop or picker upload, multi-file, previews, alt text,
-  gallery captions, a "show in gallery" toggle, copy URL and bulk delete. Local
-  storage by default, Cloudinary when configured.
+  gallery captions, a "show in gallery" toggle, copy URL and bulk delete. Photos
+  are re-encoded to WebP; videos use signed direct uploads to Cloudinary with
+  automatic compression. Local storage is the fallback when Cloudinary is not
+  configured.
 - Music manager: add tracks or albums with cover art, year, note, listen link,
   publish/hide controls, ordering and delete confirmation.
+- Testimonials manager: add, edit, reorder, hide and delete the quotes shown on
+  the homepage. The built-in examples are used until the first entry exists.
+- Projects manager: add, edit, reorder, hide and delete selected work, including
+  live and repository links, tags and an optional highlight metric.
 - Visitors: 7/30/90-day ranges, page views, uniques, active-now, countries,
   referrers, devices, browsers and CSV export.
 - Messages: unread/read/replied/archived filters, detail pane, status changes,
@@ -150,7 +159,8 @@ app/
   (public)/        Public pages with the marketing shell
   admin/
     login/         Sign-in page (unauthenticated)
-    (dashboard)/   Protected shell: dashboard, blog, media, visitors, messages, settings
+    (dashboard)/   Protected shell: dashboard, blog, media, music, projects,
+                   testimonials, visitors, messages, settings
   api/             Contact, tracking, post views, upload, analytics CSV, health
   og/              Dynamic Open Graph image
 actions/           Server actions for auth, posts, media, messages, interests, settings
@@ -168,25 +178,27 @@ proxy.ts           Route protection for /admin/*
   database, so deleted or demoted accounts lose access immediately. There are no
   fallback secrets: the app refuses to start without a strong `AUTH_SECRET`, and
   production bootstrap requires a 12+ character `ADMIN_PASSWORD`.
-- **Data.** Prisma models for users, posts, media, messages, visits, interests
-  and singleton site settings, backed by MongoDB. Tags are stored on each post as
-  a `String[]` because MongoDB does not support Prisma's implicit many-to-many
-  relations; `lib/posts.ts` maps them to `{ id, name, slug }` for the UI. Post
-  and message statuses remain strings.
+- **Data.** Prisma models for users, posts, media, messages, visits, interests,
+  testimonials, projects and singleton site settings, backed by MongoDB. Tags are
+  stored on each post as a `String[]` because MongoDB does not support Prisma's
+  implicit many-to-many relations; `lib/posts.ts` maps them to `{ id, name, slug }`
+  for the UI. Post and message statuses remain strings.
 - **Analytics.** First-party only. `/api/track` stores an anonymous visitor id,
   path, referrer, coarse device/browser/OS and optional Vercel country headers —
   no raw IP addresses. The tracker skips admin routes and the owner's session,
   and respects the cookie banner's "Essential only" choice.
-- **Media.** Uploads accept JPG, PNG and WebP up to 5 MB. SVG is rejected
-  because it is an active document format. Every file is decoded and re-encoded
+- **Media.** Photo uploads accept JPG, PNG and WebP up to 5 MB. SVG is rejected
+  because it is an active document format. Every photo is decoded and re-encoded
   with `sharp` to WebP at a maximum of 4096px, which validates the bytes and
-  strips EXIF/GPS metadata. Local files live in `public/uploads`; setting the
+  strips EXIF/GPS metadata. Videos (MP4, WebM, MOV) up to 100 MB are uploaded
+  directly from the browser to Cloudinary with a short-lived signature, then
+  delivered as compressed MP4. Local files live in `public/uploads`; setting the
   Cloudinary variables switches uploads and deletes to the Cloudinary REST API.
-  Uploaded images stay out of the public gallery until an admin adds a caption
-  and enables **Show in gallery** — or switches on **Publish uploads to the
-  public gallery** before uploading. Route handlers parse multipart bodies with
-  the native Web `FormData` API (the App Router equivalent of multer), and
-  Cloudinary is used automatically once its three environment variables are set.
+  Uploaded files stay out of the public gallery until an admin adds a caption and
+  enables **Show in gallery** — or switches on **Publish uploads to the public
+  gallery** before uploading. Route handlers parse multipart bodies with the
+  native Web `FormData` API (the App Router equivalent of multer), and Cloudinary
+  is used automatically once its three environment variables are set.
 - **Email.** Contact notifications use the Resend REST API. Messages are always
   stored first, so a provider outage never loses an enquiry.
 - **Motion.** Framer Motion/Motion animations are paired with

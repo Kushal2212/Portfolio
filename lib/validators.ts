@@ -68,6 +68,24 @@ export const testimonialSchema = z.object({
   role: z.string().trim().max(120).optional().or(z.literal("")),
 });
 
+export const projectSchema = z.object({
+  name: z.string().trim().min(2, "Give the project a name").max(100),
+  slug: z
+    .string()
+    .trim()
+    .min(2, "Add a slug")
+    .max(100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and hyphens"),
+  year: z.string().trim().min(4, "Add a year").max(12),
+  summary: z.string().trim().min(10, "Add a short summary").max(300),
+  tags: z.string().trim().max(240).optional().or(z.literal("")),
+  href: safeUrl(500).optional(),
+  repo: safeUrl(500).optional(),
+  metric: z.string().trim().max(24).optional().or(z.literal("")),
+  metricLabel: z.string().trim().max(48).optional().or(z.literal("")),
+  status: z.enum(["Live", "Open source", "Case study"]),
+});
+
 export const musicSchema = z.object({
   title: z.string().trim().min(1, "Add a title").max(140),
   artist: z.string().trim().min(1, "Add an artist").max(140),
