@@ -12,6 +12,7 @@ export type ProjectCard = {
   year: string;
   summary: string;
   tags: string[];
+  coverImage?: string | null;
   href?: string | null;
   repo?: string | null;
   metric?: string | null;
@@ -55,10 +56,20 @@ export function FeaturedProjects({
             <Reveal key={project.slug} delay={index * 0.06}>
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-500 hover:border-brand/25">
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <CoverArt
-                    seed={project.slug}
-                    className="size-full transition-transform duration-700 group-hover:scale-[1.02]"
-                  />
+                  {project.coverImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={project.coverImage}
+                      alt=""
+                      loading="lazy"
+                      className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                  ) : (
+                    <CoverArt
+                      seed={project.slug}
+                      className="size-full transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                  )}
                   <div className="absolute right-3 top-3">
                     <Badge variant={project.status === "Open source" ? "violet" : "default"} className="backdrop-blur-md">
                       {project.status}

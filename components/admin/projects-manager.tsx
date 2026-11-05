@@ -10,9 +10,12 @@ import {
   EyeOff,
   FolderKanban,
   Github,
+  ImagePlus,
+  Loader2,
   Pencil,
   Plus,
   Trash2,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,6 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { CoverArt } from "@/components/shared/cover-art";
 import { slugify } from "@/lib/utils";
 
 type Project = {
@@ -48,6 +52,7 @@ type Project = {
   year: string;
   summary: string;
   tags: string[];
+  coverImage: string | null;
   href: string | null;
   repo: string | null;
   metric: string | null;
@@ -74,6 +79,9 @@ export function ProjectsManager({
   const [name, setName] = React.useState("");
   const [slug, setSlug] = React.useState("");
   const [slugTouched, setSlugTouched] = React.useState(false);
+  const [coverImage, setCoverImage] = React.useState("");
+  const [uploadingCover, setUploadingCover] = React.useState(false);
+  const coverInputRef = React.useRef<HTMLInputElement>(null);
   const [pendingDelete, setPendingDelete] = React.useState<Project | null>(null);
   const [busy, setBusy] = React.useState(false);
 
@@ -83,6 +91,7 @@ export function ProjectsManager({
     setName("");
     setSlug("");
     setSlugTouched(false);
+    setCoverImage("");
     setStatus("Live");
   }
 
@@ -99,6 +108,7 @@ export function ProjectsManager({
     setName(project.name);
     setSlug(project.slug);
     setSlugTouched(true);
+    setCoverImage(project.coverImage ?? "");
     setStatus(project.status);
     setPublished(project.published);
   }
@@ -111,6 +121,37 @@ export function ProjectsManager({
   function onNameChange(value: string) {
     setName(value);
     if (!slugTouched) setSlug(slugify(value));
+  }
+
+  async function uploadCover(file: File) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Use a JPG, PNG or WebP image.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Images must be 5 MB or smaller.");
+      return;
+    }
+
+    setUploadingCover(true);
+    const form = new FormData();
+    form.append("file", file);
+    form.append("published", "false");
+
+    try {
+      const response = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || "Could not upload the photo.");
+        return;
+      }
+      setCoverImage(data.media?.url ?? "");
+      toast.success("Photo uploaded");
+    } catch {
+      toast.error("Network error while uploading the photo.");
+    } finally {
+      setUploadingCover(false);
+    }
   }
 
   async function move(index: number, direction: -1 | 1) {
@@ -227,8 +268,13 @@ export function ProjectsManager({
               key={project.id}
               className="flex items-start gap-3 rounded-xl border border-border bg-card p-3"
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                <FolderKanban className="size-4" />
+              <span className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted text-muted-foreground">
+                {project.coverImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={project.coverImage} alt="" className="size-full object-cover" loading="lazy" />
+                ) : (
+                  <FolderKanban className="size-4" />
+                )}
               </span>
 
               <div className="min-w-0 flex-1">
@@ -353,6 +399,7 @@ export function ProjectsManager({
           >
             <input type="hidden" name="published" value={published ? "true" : "false"} />
             <input type="hidden" name="status" value={status} />
+            <input type="hidden" name="coverImage" value={coverImage} />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
@@ -427,6 +474,74 @@ export function ProjectsManager({
                 maxLength={300}
                 required
               />
+            </div>
+
+            <div className="space-y-2 rounded-lg border border-border bg-background/60 p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-medium">Cover photo</p>
+                  <p className="mt-0.5 text-[10px] text-muted-foreground">
+                    JPG, PNG or WebP up to 5 MB. A generated cover is used when this is empty.
+                  </p>
+                </div>
+                {coverImage && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 rounded-full px-2 text-[10px]"
+                    onClick={() => setCoverImage("")}
+                  >
+                    <X className="size-3" /> Remove
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <div className="relative aspect-[16/10] w-40 shrink-0 overflow-hidden rounded-lg border border-border">
+                  {coverImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={coverImage} alt="" className="size-full object-cover" />
+                  ) : (
+                    <CoverArt seed={slug || name || "project"} className="size-full" />
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <input
+                    ref={coverInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void uploadCover(file);
+                      event.target.value = "";
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-fit rounded-full text-[11px]"
+                    onClick={() => coverInputRef.current?.click()}
+                    disabled={uploadingCover}
+                  >
+                    {uploadingCover ? (
+                      <Loader2 className="size-3.5 animate-spin" />
+                    ) : (
+                      <ImagePlus className="size-3.5" />
+                    )}
+                    {uploadingCover ? "Uploading…" : coverImage ? "Replace photo" : "Upload photo"}
+                  </Button>
+                  <Input
+                    value={coverImage}
+                    onChange={(event) => setCoverImage(event.target.value)}
+                    placeholder="https://… or /uploads/…"
+                    className="h-8 text-[10px]"
+                    aria-label="Project cover image URL"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-1.5">

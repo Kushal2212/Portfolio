@@ -99,6 +99,7 @@ model Project {
   year        String
   summary     String
   tags        String[]
+  coverImage  String?
   href        String?
   repo        String?
   metric      String?

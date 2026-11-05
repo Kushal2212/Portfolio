@@ -31,6 +31,7 @@ export default async function AdminProjectsPage() {
           year: project.year,
           summary: project.summary,
           tags: project.tags,
+          coverImage: project.coverImage,
           href: project.href,
           repo: project.repo,
           metric: project.metric,

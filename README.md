@@ -103,7 +103,8 @@ database name before any query string, e.g.
 - Testimonials manager: add, edit, reorder, hide and delete the quotes shown on
   the homepage. The built-in examples are used until the first entry exists.
 - Projects manager: add, edit, reorder, hide and delete selected work, including
-  live and repository links, tags and an optional highlight metric.
+  a cover photo upload (JPG/PNG/WebP), live and repository links, tags and an
+  optional highlight metric. Uploaded covers also land in the media library.
 - Visitors: 7/30/90-day ranges, page views, uniques, active-now, countries,
   referrers, devices, browsers and CSV export.
 - Messages: unread/read/replied/archived filters, detail pane, status changes,

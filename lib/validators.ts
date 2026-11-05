@@ -79,6 +79,7 @@ export const projectSchema = z.object({
   year: z.string().trim().min(4, "Add a year").max(12),
   summary: z.string().trim().min(10, "Add a short summary").max(300),
   tags: z.string().trim().max(240).optional().or(z.literal("")),
+  coverImage: safeUrl(500).optional(),
   href: safeUrl(500).optional(),
   repo: safeUrl(500).optional(),
   metric: z.string().trim().max(24).optional().or(z.literal("")),

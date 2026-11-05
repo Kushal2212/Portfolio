@@ -8,6 +8,7 @@ export type PublicProject = {
   year: string;
   summary: string;
   tags: string[];
+  coverImage: string | null;
   href: string | null;
   repo: string | null;
   metric: string;
@@ -35,6 +36,7 @@ export async function getPublicProjects(): Promise<PublicProject[] | null> {
         year: row.year,
         summary: row.summary,
         tags: row.tags,
+        coverImage: row.coverImage,
         href: row.href,
         repo: row.repo,
         metric: row.metric ?? "",
