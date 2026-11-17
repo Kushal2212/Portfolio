@@ -82,9 +82,6 @@ export function PostCard({
             Read article
             <ArrowUpRight className="size-3.5 text-brand transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </span>
-          <span className="font-mono text-[10px] text-muted-foreground">
-            {post.views.toLocaleString()} views
-          </span>
         </div>
       </div>
     </article>

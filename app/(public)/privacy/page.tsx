@@ -4,12 +4,15 @@ import { ArrowLeft, Cookie, Database, Eye, Lock, Mail } from "lucide-react";
 import { getSettings } from "@/lib/settings";
 import { Reveal } from "@/components/aceternity/reveal";
 import { Button } from "@/components/ui/button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy & cookies",
-  description: "A plain-language explanation of what this site collects, why, and how to opt out.",
-  alternates: { canonical: "/privacy" },
-};
+  description:
+    "A plain-language explanation of what this site collects, why, and how to opt out.",
+  path: "/privacy",
+  imageTitle: "Privacy & cookies",
+});
 
 const sections = [
   {

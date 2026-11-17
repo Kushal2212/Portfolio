@@ -101,7 +101,7 @@ export function PersonalDetails({ settings }: { settings: Settings }) {
               Off the clock
             </span>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Running, film photography, espresso and a reading pile that grows faster than I can finish it.
+              Cricket, football, Pakistani music and a growing pile of side projects.
             </p>
             <Link
               href="/interests"

@@ -6,19 +6,21 @@ import { CopyEmail } from "@/components/shared/copy-email";
 import { SocialLinks } from "@/components/shared/social-links";
 import { Reveal } from "@/components/aceternity/reveal";
 import { Badge } from "@/components/ui/badge";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact",
   description:
-    "Get in touch with Kushal Dahal about a project, a role, or a question.",
-  alternates: { canonical: "/contact" },
-};
+    "Get in touch with Kushal Dahal about a website, a web app, an API or a role. Based in Nepal and remote-friendly.",
+  path: "/contact",
+  imageTitle: "Say hello",
+});
 
 const helpItems = [
-  "Building a product from an early idea to launch",
-  "Frontend architecture and design systems",
-  "Performance and accessibility reviews",
-  "Technical writing and developer documentation",
+  "Business websites and landing pages",
+  "React and Next.js web apps",
+  "REST APIs with Node.js or Flask",
+  "AI and machine-learning integrations",
 ];
 
 export default async function ContactPage({
@@ -94,9 +96,17 @@ export default async function ContactPage({
                   <p className="flex items-center gap-2 text-xs text-muted-foreground">
                     <Phone className="size-3.5 text-brand" /> Phone
                   </p>
-                  <a href={`tel:${settings.phone.replace(/\s/g, "")}`} className="mt-1 block text-sm font-medium link-underline">
-                    {settings.phone}
-                  </a>
+                  <details className="group mt-1">
+                    <summary className="cursor-pointer list-none text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline">
+                      Show number
+                    </summary>
+                    <a
+                      href={`tel:${settings.phone.replace(/\s/g, "")}`}
+                      className="mt-1 block text-sm font-medium link-underline"
+                    >
+                      {settings.phone}
+                    </a>
+                  </details>
                 </div>
                 <div>
                   <p className="flex items-center gap-2 text-xs text-muted-foreground">

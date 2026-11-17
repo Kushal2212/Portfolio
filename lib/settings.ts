@@ -26,20 +26,21 @@ export type Settings = {
 export const defaultSettings: Settings = {
   fullName: "Kushal Dahal",
   title: "Full-Stack Engineer",
-  tagline: "I build calm, useful websites and write about the work.",
-  bio: "I'm a full-stack engineer and from Madi, Sankhuwasabha, now working with teams wherever the internet reaches. I've spent the last six years helping small teams turn complicated ideas into products that are easy to use. I like simple interfaces, clear writing and code that another person can pick up without a meeting.",
+  tagline: "I build web apps and AI-powered tools.",
+  bio: "I'm a full-stack developer from Madi, Sankhuwasabha, Nepal. I build web apps and AI-powered tools with Next.js, React, Node.js and Python, and I care about interfaces that are simple to use and code another person can pick up without a meeting.",
   email: "dahalkushal00@gmail.com",
   phone: "+977 9841835949",
   location: "Madi, Sankhuwasabha, Nepal",
-  education: "BSc.CSIT, Tribhuvan University",
+  education: "BSc.CSIT, Biratnagar Multiple College",
   hometown: "Madi, Sankhuwasabha",
   avatarUrl: "/images/avatar.jpg",
   resumeUrl: "/resume.pdf",
   availability: "Open to freelance work",
-  heroNote: "Currently I am doing nothing but learning and exploring new technologies.",
-  seoTitle: "Kushal Dahal — Full-Stack Engineer",
+  heroNote:
+    "Working as a full-stack developer at AvyantaTech while finishing my BSc CSIT, and exploring machine learning for agriculture.",
+  seoTitle: "Kushal Dahal — Full-Stack Developer in Nepal",
   seoDescription:
-    "Kushal Dahal is a full-stack engineer and from Madi, Sankhuwasabha. Portfolio, writing and occasional experiments.",
+    "Kushal Dahal is a full-stack developer from Madi, Sankhuwasabha, Nepal, building web apps and AI tools with Next.js, Node.js and Python.",
   socials: [
     { label: "GitHub", href: "https://github.com/Kushal2212" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/kushal-dahal-a0449b2a1/" },

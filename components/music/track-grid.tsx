@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowUpRight, Music2 } from "lucide-react";
 import { CoverArt } from "@/components/shared/cover-art";
 import { Button } from "@/components/ui/button";
@@ -20,12 +21,12 @@ export function TrackGrid({
         >
           <div className="relative aspect-square overflow-hidden border-b border-border">
             {track.coverUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={track.coverUrl}
                 alt={`Cover art for ${track.title} by ${track.artist}`}
-                className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
             ) : (
               <CoverArt

@@ -36,7 +36,7 @@ function LocalTime() {
 
   return (
     <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
-      {time || "—:—"} NPT
+      {time ? `${time} NPT` : "\u00A0"}
     </span>
   );
 }
@@ -147,9 +147,12 @@ export function Hero({ settings }: { settings: Settings }) {
             <h1 className="mt-7 text-[3.1rem] font-semibold leading-[0.94] tracking-[-0.04em] sm:text-[4.2rem] md:text-[5rem] xl:text-[5.7rem]">
               {settings.fullName.split(/\s+/)[0]}
               {settings.fullName.split(/\s+/).length > 1 && (
-                <span className="relative block font-serif font-normal tracking-[-0.02em]">
-                  {settings.fullName.split(/\s+/).slice(1).join(" ")}
-                </span>
+                <>
+                  {" "}
+                  <span className="relative block font-serif font-normal tracking-[-0.02em]">
+                    {settings.fullName.split(/\s+/).slice(1).join(" ")}
+                  </span>
+                </>
               )}
             </h1>
 

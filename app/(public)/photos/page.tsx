@@ -4,13 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { getSettings } from "@/lib/settings";
 import { PhotoGallery, type GalleryPhoto } from "@/components/gallery/photo-gallery";
 import { Reveal } from "@/components/aceternity/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Photos",
   description:
     "A small, slowly growing collection of photographs by Kushal Dahal — streets, hills, ordinary days and the people in them.",
-  alternates: { canonical: "/photos" },
-};
+  path: "/photos",
+  imageTitle: "A few things I noticed",
+});
 
 export const revalidate = 60;
 

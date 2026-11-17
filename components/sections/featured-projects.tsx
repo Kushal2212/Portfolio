@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Reveal } from "@/components/aceternity/reveal";
@@ -39,7 +40,7 @@ export function FeaturedProjects({
               A few things I&apos;ve <span className="font-serif font-normal">made</span>.
             </>
           }
-          description="Small products and side projects, mostly built to answer a question I had. More is available on request."
+          description="Client and personal projects, built to solve a real problem. More is available on request."
           action={
             githubUrl ? (
               <Button asChild variant="outline" className="rounded-full">
@@ -57,12 +58,12 @@ export function FeaturedProjects({
               <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors duration-500 hover:border-brand/25">
                 <div className="relative aspect-[16/10] overflow-hidden">
                   {project.coverImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <Image
                       src={project.coverImage}
-                      alt=""
-                      loading="lazy"
-                      className="size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                      alt={`${project.name} preview`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                     />
                   ) : (
                     <CoverArt

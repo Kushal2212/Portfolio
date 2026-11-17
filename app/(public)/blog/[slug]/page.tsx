@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Clock, Eye } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Clock } from "lucide-react";
 import { getPostBySlug, getRelatedPosts } from "@/lib/posts";
 import { getSettings } from "@/lib/settings";
 import { absoluteUrl, formatDate } from "@/lib/utils";
@@ -30,7 +30,9 @@ export async function generateMetadata({
 
   const title = post.seoTitle || post.title;
   const description = post.seoDesc || post.excerpt || undefined;
-  const image = post.coverImage ? absoluteUrl(post.coverImage) : absoluteUrl("/og");
+  const image = post.coverImage
+    ? absoluteUrl(post.coverImage)
+    : absoluteUrl(`/og?title=${encodeURIComponent(post.title)}`);
 
   return {
     title,
@@ -119,9 +121,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </span>
               <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Clock className="size-3.5" /> {post.readingTime} min read
-              </span>
-              <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                <Eye className="size-3.5" /> {post.views.toLocaleString()} views
               </span>
             </div>
           </header>

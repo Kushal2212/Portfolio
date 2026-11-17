@@ -4,13 +4,15 @@ import { getPublishedTracks } from "@/lib/music";
 import { getSettings } from "@/lib/settings";
 import { TrackGrid } from "@/components/music/track-grid";
 import { Reveal } from "@/components/aceternity/reveal";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Music",
   description:
     "Albums, tracks and playlists on repeat — the soundtrack to long build sessions and slow mornings.",
-  alternates: { canonical: "/music" },
-};
+  path: "/music",
+  imageTitle: "Sounds on repeat",
+});
 
 export const revalidate = 60;
 

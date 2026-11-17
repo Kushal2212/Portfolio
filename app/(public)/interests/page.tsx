@@ -21,13 +21,15 @@ import { BentoItem } from "@/components/aceternity/bento-grid";
 import { Reveal } from "@/components/aceternity/reveal";
 import { Badge } from "@/components/ui/badge";
 import { SportingAllegiances } from "@/components/interests/sporting-allegiances";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Interests",
   description:
-    "Things Kushal does away from the keyboard: photography, trail running, espresso, reading, cricket, football and more.",
-  alternates: { canonical: "/interests" },
-};
+    "What Kushal does away from the keyboard: cricket, football, Pakistani music and a growing pile of side projects.",
+  path: "/interests",
+  imageTitle: "Off the clock",
+});
 
 export const revalidate = 600;
 

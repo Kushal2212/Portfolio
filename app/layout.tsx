@@ -49,14 +49,15 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s — ${settings.fullName}`,
     },
     description,
-    authors: [{ name: settings.fullName, url: settings.seoTitle ? undefined : undefined }],
+    authors: [{ name: settings.fullName, url: absoluteUrl("/") }],
     creator: settings.fullName,
     keywords: [
       settings.fullName,
       "full-stack developer",
       "Next.js developer",
-      "interaction designer",
-      "portfolio",
+      "React developer",
+      "Python developer",
+      "AI developer",
       settings.hometown,
       "Nepal",
     ],
@@ -76,7 +77,10 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [absoluteUrl("/og")],
     },
     robots: { index: true, follow: true },
-    alternates: { canonical: "/" },
+    alternates: {
+      canonical: "/",
+      types: { "application/rss+xml": "/feed.xml" },
+    },
   };
 }
 

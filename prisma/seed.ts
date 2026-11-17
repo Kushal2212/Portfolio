@@ -209,21 +209,22 @@ async function main() {
 
   const settings = {
     fullName: "Kushal Dahal",
-    title: "Full-Stack Engineer & Interaction Designer",
-    tagline: "I build calm, useful websites and write about the work.",
-    bio: "I'm a full-stack engineer and interaction designer from Madi, Sankhuwasabha, now working with teams wherever the internet reaches. I've spent the last six years helping small teams turn complicated ideas into products that are easy to use. I like simple interfaces, clear writing and code that another person can pick up without a meeting.",
+    title: "Full-Stack Engineer",
+    tagline: "I build web apps and AI-powered tools.",
+    bio: "I'm a full-stack developer from Madi, Sankhuwasabha, Nepal. I build web apps and AI-powered tools with Next.js, React, Node.js and Python, and I care about interfaces that are simple to use and code another person can pick up without a meeting.",
     email: "hello@kushaldahal.dev",
     phone: "+977 980 123 4567",
     location: "Madi, Sankhuwasabha, Nepal · UTC+5:45",
-    education: "BSc.CSIT, Tribhuvan University",
+    education: "BSc.CSIT, Biratnagar Multiple College",
     hometown: "Madi, Sankhuwasabha",
     avatarUrl: "/images/avatar.jpg",
     resumeUrl: "/resume.pdf",
     availability: "Open to freelance work",
-    heroNote: "Currently building developer tools at Fathom Labs.",
-    seoTitle: "Kushal Dahal — Full-Stack Engineer & Interaction Designer",
+    heroNote:
+      "Working as a full-stack developer at AvyantaTech while finishing my BSc CSIT, and exploring machine learning for agriculture.",
+    seoTitle: "Kushal Dahal — Full-Stack Developer in Nepal",
     seoDescription:
-      "Kushal Dahal is a full-stack engineer and interaction designer from Madi, Sankhuwasabha. Portfolio, writing and occasional experiments.",
+      "Kushal Dahal is a full-stack developer from Madi, Sankhuwasabha, Nepal, building web apps and AI tools with Next.js, Node.js and Python.",
     socials: JSON.stringify([
       { label: "GitHub", href: "https://github.com/kushaldahal" },
       { label: "LinkedIn", href: "https://linkedin.com/in/kushaldahal" },
@@ -264,46 +265,32 @@ async function main() {
   await Promise.all(
     [
       {
-        title: "Photography",
+        title: "Cricket",
         description:
-          "I take a small camera on walks. Most photos are of streets, mountains and friends who agreed to stand still.",
-        icon: "camera",
+          "South Africa, mostly. Test matches, fast bowling and a scorecard I check more often than I should.",
+        icon: "trophy",
         order: 0,
       },
       {
-        title: "Trail running",
+        title: "Football",
         description:
-          "Slowly working up to a 50k. The first hour is hard. The rest is usually fine.",
-        icon: "mountain",
+          "Brazil, always. Yellow shirts and the kind of football that makes an ordinary evening better.",
+        icon: "goal",
         order: 1,
       },
       {
-        title: "Espresso",
+        title: "Music",
         description:
-          "A small setup at home. I am not good at it yet, but the coffee is better than it was last year.",
-        icon: "coffee",
+          "Atif Aslam, Coke Studio and a long Pakistani playlist. Most of it plays while I am working.",
+        icon: "music",
         order: 2,
       },
       {
-        title: "Reading",
+        title: "Side projects",
         description:
-          "Mostly fiction and design writing. I keep coming back to Ursula K. Le Guin.",
-        icon: "book",
+          "Small apps built to answer a question I had. Some of them even survive the first week.",
+        icon: "code",
         order: 3,
-      },
-      {
-        title: "Open source",
-        description:
-          "I maintain a small UI library and send the occasional patch upstream.",
-        icon: "github",
-        order: 4,
-      },
-      {
-        title: "Synth music",
-        description:
-          "Ambient loops on a tiny modular setup. Nothing finished, most of it recorded.",
-        icon: "music",
-        order: 5,
       },
     ].map((data) => prisma.interest.create({ data })),
   );

@@ -20,11 +20,15 @@ export const navLinks = [
 
 export const skills = [
   { name: "TypeScript", group: "Language" },
+  { name: "Python", group: "Language" },
   { name: "React", group: "Frontend" },
   { name: "Next.js", group: "Frontend" },
   { name: "Tailwind CSS", group: "Frontend" },
   { name: "Node.js", group: "Backend" },
+  { name: "Express", group: "Backend" },
+  { name: "Flask", group: "Backend" },
   { name: "PostgreSQL", group: "Backend" },
+  { name: "MongoDB", group: "Backend" },
   { name: "Prisma", group: "Backend" },
   { name: "Zod", group: "Backend" },
   { name: "Docker", group: "Tooling" },
@@ -40,7 +44,12 @@ export const skillGroups = [
   {
     title: "Backend & data",
     description: "APIs and schemas that stay readable as the product grows.",
-    items: ["Node.js", "PostgreSQL", "Prisma", "Zod", "Redis"],
+    items: ["Node.js", "Express", "PostgreSQL", "MongoDB", "Prisma", "Zod"],
+  },
+  {
+    title: "AI & tooling",
+    description: "Enough Python and computer vision to ship the cardamom detector.",
+    items: ["Python", "Flask", "OpenCV", "Hugging Face", "Docker", "Git"],
   },
 ];
 
@@ -59,52 +68,9 @@ export type Project = {
   status: "Live" | "Open source" | "Case study";
 };
 
-export const projects: Project[] = [
-  {
-    slug: "Cardamom",
-    name: "Orbit Analytics",
-    year: "2025",
-    summary: "A small, privacy-first analytics tool I use on my own sites.",
-    description:
-      "A cookieless page-view tracker with a short list of charts. I built it to see how far a simple Postgres query layer could go without adding a warehouse.",
-    tags: ["Next.js", "Postgres", "tRPC", "Recharts"],
-    href: "#",
-    repo: "https://github.com",
-    accent: "from-emerald-300/40 via-stone-400/20 to-cyan-400/15",
-    metric: "3",
-    metricLabel: "sites using it",
-    status: "Live",
-  },
-  {
-    slug: "lumen",
-    name: "Lumen UI",
-    year: "2024",
-    summary: "A small component library I maintain for my own projects.",
-    description:
-      "A set of accessible React components with sensible defaults and a few motion helpers. It is not trying to replace anything. It just saves me from rebuilding the same buttons every year.",
-    tags: ["TypeScript", "Radix", "Tailwind", "Motion"],
-    href: "#",
-    repo: "https://github.com",
-    accent: "from-violet-300/40 via-stone-300/20 to-amber-300/15",
-    metric: "48",
-    metricLabel: "components",
-    status: "Open source",
-  },
-  {
-    slug: "papertrail",
-    name: "Papertrail",
-    year: "2024",
-    summary: "A shared writing space I built to learn how sync works.",
-    description:
-      "Local-first notes with version history and offline editing. The interesting part was the sync server. The rest is a quiet interface that stays out of the way.",
-    tags: ["React", "Yjs", "WebSockets", "Node"],
-    href: "#",
-    accent: "from-amber-300/50 via-orange-300/25 to-rose-300/20",
-    metric: "2024",
-    metricLabel: "side project",
-    status: "Case study",
-  },
-];
+// Projects are managed from the admin panel. Keep this empty so the site never
+// falls back to invented example work when the database is empty.
+export const projects: Project[] = [];
 
 
 export type TimelineItem = {
@@ -118,15 +84,14 @@ export type TimelineItem = {
 };
 
 export const timeline: TimelineItem[] = [
-  
   {
-    period: "2026 — 2027",
+    period: "2026 — Present",
     title: "Full-Stack Engineer",
     org: "AvyantaTech Private Limited",
     location: "Itahari, Nepal",
     description:
-    "Made websites for construction clients. Worked closely with designers on type, small interaction details that are easy to skip.",
-    tags: ["React", "Tailwind", "Next.js", "Node.js", "PostgreSQL"],
+      "Building client websites end to end — layouts, content structure, APIs and deployment. Most of the work is React and Node.js, with a focus on keeping small sites fast and easy to update.",
+    tags: ["React", "Next.js", "Node.js", "Express", "MongoDB"],
     kind: "work",
   },
   {
@@ -135,8 +100,8 @@ export const timeline: TimelineItem[] = [
     org: "Biratnagar Multiple College",
     location: "Biratnagar, Nepal",
     description:
-      "I have studied Computer Science at this institution.",
-    tags: ["DSA", "AI", "Web Development", "Mathematics", "Physics"],
+      "Final-year BSc CSIT student. Coursework in data structures, databases and computer networks, with most of my learning happening in side projects.",
+    tags: ["DSA", "Databases", "Networking", "Web Development", "Mathematics"],
     kind: "education",
   },
   {
@@ -145,7 +110,7 @@ export const timeline: TimelineItem[] = [
     org: "Arniko Higher Secondary School",
     location: "Biratnagar, Nepal",
     description:
-      "I have studied science at this institution.",
+      "Studied Physics, Chemistry, Mathematics and Computer Science.",
     tags: ["Computer Science", "Mathematics", "Physics"],
     kind: "education",
   },
@@ -154,8 +119,7 @@ export const timeline: TimelineItem[] = [
     title: "Secondary School",
     org: "Madi Higher Secondary School",
     location: "Madi, Sankhuwasabha",
-    description:
-      "Completed my Secondary level eduction from my hometown.",
+    description: "Completed my secondary education in my hometown.",
     tags: ["Nepali", "English", "Mathematics", "Science"],
     kind: "education",
   },
@@ -167,79 +131,42 @@ export const certifications = [
   { name: "Google UX Design Certificate", issuer: "Google", year: "2021" },
 ];
 
-export const testimonials = [
-  {
-    quote:
-      "Kushal asks a lot of questions before he writes code. The result is usually simpler than what we started with, and easier for the team to keep.",
-    name: "Maya Lindqvist",
-    role: "Product lead, Fathom Labs",
-    initials: "ML",
-  },
-  {
-    quote:
-      "He rebuilt our design system without making it feel like a redesign. Two weeks in, the team had stopped complaining about the frontend.",
-    name: "Arjun Shrestha",
-    role: "Founder, Sajilo",
-    initials: "AS",
-  },
-  {
-    quote:
-      "I hired Kushal for a landing page and he fixed our accessibility issues too. He cares about the parts most people never notice.",
-    name: "Elena Duarte",
-    role: "Engineering lead, Northwind",
-    initials: "ED",
-  },
-];
+// Real testimonials live in the admin panel. Keep this empty rather than
+// showing invented quotes when there are no published rows.
+export const testimonials: {
+  quote: string;
+  name: string;
+  role: string;
+  initials: string;
+}[] = [];
 
 export const interestsFallback = [
-  {
-    title: "Photography",
-    description: "I take a small camera on walks. Most photos are of streets, mountains and friends who agreed to stand still.",
-    icon: "camera",
-    order: 0,
-  },
-  {
-    title: "Trail running",
-    description: "Slowly working up to a 50k. The first hour is hard. The rest is usually fine.",
-    icon: "mountain",
-    order: 1,
-  },
-  {
-    title: "Espresso",
-    description: "A small setup at home. I am not good at it yet, but the coffee is better than it was last year.",
-    icon: "coffee",
-    order: 2,
-  },
-  {
-    title: "Reading",
-    description: "Mostly fiction and design writing. I keep coming back to Ursula K. Le Guin.",
-    icon: "book",
-    order: 3,
-  },
-  {
-    title: "Open source",
-    description: "I maintain a small UI library and send the occasional patch upstream.",
-    icon: "github",
-    order: 4,
-  },
-  {
-    title: "Synth music",
-    description: "Ambient loops on a tiny modular setup. Nothing finished, most of it recorded.",
-    icon: "music",
-    order: 5,
-  },
   {
     title: "Cricket",
     description:
       "South Africa, mostly. Test matches, fast bowling and a scorecard I check more often than I should.",
     icon: "trophy",
-    order: 6,
+    order: 0,
   },
   {
     title: "Football",
     description:
       "Brazil, always. Yellow shirts and the kind of football that makes an ordinary evening better.",
     icon: "goal",
-    order: 7,
+    order: 1,
+  },
+  {
+    title: "Music",
+    description:
+      "Atif Aslam, Coke Studio and a long Pakistani playlist. Most of it plays while I am working.",
+    icon: "music",
+    order: 2,
+  },
+  {
+    title: "Side projects",
+    description:
+      "Small apps built to answer a question I had. Some of them even survive the first week.",
+    icon: "code",
+    order: 3,
   },
 ];

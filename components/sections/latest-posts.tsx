@@ -17,7 +17,7 @@ export function LatestPosts({ posts }: { posts: PostCardType[] }) {
               Recent <span className="font-serif font-normal">writing</span>.
             </>
           }
-          description="Notes on building software, designing interfaces, and the occasional detour into process."
+          description="Notes on building software, side projects and the occasional detour into cricket."
           action={
             <Button asChild variant="outline" className="rounded-full">
               <Link href="/blog">

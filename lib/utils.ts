@@ -64,6 +64,7 @@ export function formatBytes(bytes: number) {
 }
 
 export function absoluteUrl(path = "") {
+  if (/^https?:\/\//i.test(path)) return path;
   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }

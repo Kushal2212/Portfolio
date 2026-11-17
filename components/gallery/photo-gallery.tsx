@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { cn, formatDate } from "@/lib/utils";
 
+
 export type GalleryPhoto = {
   id: string;
   url: string;
@@ -63,6 +64,7 @@ export function PhotoGallery({ photos }: { photos: GalleryPhoto[] }) {
   const active = activeIndex === null ? null : photos[activeIndex];
 
   return (
+
     <>
       <div className="space-y-4">
         <PhotoButton

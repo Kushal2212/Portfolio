@@ -6,13 +6,15 @@ import { PostCard } from "@/components/blog/post-card";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/aceternity/reveal";
 import { cn } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog",
   description:
-    "Notes on engineering, design and the everyday work of building software.",
-  alternates: { canonical: "/blog" },
-};
+    "Notes on engineering, side projects and the occasional cricket detour — written while building things for the web.",
+  path: "/blog",
+  imageTitle: "The notebook",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -62,8 +64,8 @@ export default async function BlogPage({
             <span className="font-serif font-normal">the work.</span>
           </h1>
           <p className="mt-5 max-w-xl text-[0.98rem] leading-relaxed text-muted-foreground">
-            {total} {total === 1 ? "post" : "posts"} about engineering, design and the small
-            decisions that rarely make it into a changelog.
+            {total} {total === 1 ? "post" : "posts"} about engineering, side projects and
+            whatever else is on my mind while building.
           </p>
 
           <div className="mt-9 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

@@ -2,15 +2,26 @@ import { ImageResponse } from "next/og";
 import { getSettings } from "@/lib/settings";
 
 export const runtime = "nodejs";
-export const alt = "Kushal Dahal — Full-Stack Engineer & Interaction Designer";
+export const alt = "Kushal Dahal — Full-Stack Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export async function GET() {
+export async function GET(request: Request) {
   const settings = await getSettings();
   const nameParts = settings.fullName.trim().split(/\s+/);
   const firstName = nameParts[0] ?? settings.fullName;
   const lastName = nameParts.slice(1).join(" ");
+  const requestedTitle = new URL(request.url).searchParams
+    .get("title")
+    ?.replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 64);
+  const heading = requestedTitle || firstName;
+  const headingSize = requestedTitle
+    ? requestedTitle.length > 32
+      ? 56
+      : 76
+    : 92;
   return new ImageResponse(
     (
       <div
@@ -83,12 +94,20 @@ export async function GET() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 92, lineHeight: 0.98, letterSpacing: "-0.05em", fontWeight: 700 }}>
-            {firstName}
+          <div
+            style={{
+              fontSize: headingSize,
+              lineHeight: 1.02,
+              letterSpacing: "-0.05em",
+              fontWeight: 700,
+              maxWidth: 1000,
+            }}
+          >
+            {heading}
           </div>
           <div
             style={{
-              fontSize: 96,
+              fontSize: requestedTitle ? 64 : 96,
               lineHeight: 1,
               letterSpacing: "-0.04em",
               fontFamily: "Georgia, serif",
@@ -97,7 +116,7 @@ export async function GET() {
               gap: 20,
             }}
           >
-            {lastName || settings.fullName}
+            {requestedTitle ? settings.fullName : lastName || settings.fullName}
             <div style={{ width: 18, height: 18, borderRadius: 9999, background: "#b9cba4", marginTop: 30 }} />
           </div>
           <div style={{ marginTop: 28, fontSize: 28, color: "#aaa297", letterSpacing: "-0.01em" }}>

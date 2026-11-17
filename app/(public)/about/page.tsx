@@ -17,32 +17,21 @@ import { Reveal } from "@/components/aceternity/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SocialLinks } from "@/components/shared/social-links";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
   description:
-    "A little more about Kushal Dahal: how he started building websites, what he works on now, and how he likes to work.",
-  alternates: { canonical: "/about" },
-};
+    "BSc CSIT student and full-stack developer from Madi, Sankhuwasabha. How I started building for the web and what I am working on now.",
+  path: "/about",
+  imageTitle: "About",
+});
 
 export const revalidate = 600;
 
 export default async function AboutPage() {
   const settings = await getSettings();
-  const school = settings.education
-    .split(",")
-    .map((part) => part.trim())
-    .slice(1);
-  const aboutTimeline = timeline.map((item) =>
-    item.kind === "education"
-      ? {
-          ...item,
-          title: item.title,
-          org: school.join(", ") || item.org,
-          location: settings.hometown || item.location,
-        }
-      : item,
-  );
+  const aboutTimeline = timeline;
 
   return (
     <>
@@ -140,48 +129,25 @@ export default async function AboutPage() {
           />
           <Reveal className="space-y-5 text-[0.98rem] leading-[1.85] text-muted-foreground">
             <p>
-              I&apos;m a BSc. CSIT student with a passion for computer science and
-              technology that started in childhood. I enjoy turning ideas into
-              practical projects, from building an AI-powered cardamom disease
-              detection system to developing an anonymous feedback web
-              application.
+              The turning point was building an AI-powered cardamom disease
+              detector for farmers in Sankhuwasabha. It was the first time a
+              project of mine had to work for someone other than me — and the
+              first time I had to think about model output, a usable upload
+              flow and a deployment that stayed online.
             </p>
 
             <p>
-              I&apos;m always curious to learn something new, whether it&apos;s exploring
-              backend development, experimenting with new technologies, or
-              watching tech tutorials from creators like Chai aur Code. Beyond
-              coding, I enjoy watching and playing sports, especially football
-              and cricket.
+              Since then I have worked on client websites and an anonymous
+              feedback app, mostly with React, Next.js, Node.js and Python. I
+              learn by building, breaking things and reading the error message
+              properly before asking for help. Watching Chai aur Code counts as
+              research.
             </p>
             <p className="text-sm text-muted-foreground">
-              I believe in learning by building, staying curious, and
-              continuously improving as a developer.
+              I care about clear interfaces, honest copy and code that another
+              person can pick up without a meeting.
             </p>
           </Reveal>
-        </div>
-      </section>
-
-      <section className="relative border-t border-border">
-        <div className="container-page py-8">
-          <div className="relative aspect-[21/9] overflow-hidden rounded-2xl border border-border">
-            <Image
-              src="/images/studio.jpeg"
-              alt="A collaborative studio workspace with people working together"
-              fill
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-3 p-5 text-white sm:p-8">
-              <p className="max-w-md font-serif text-xl sm:text-2xl">
-                A studio day, somewhere between the sketch and the deploy.
-              </p>
-              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/60">
-                2025
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 
