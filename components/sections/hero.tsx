@@ -6,7 +6,6 @@ import Link from "next/link";
 import {
   motion,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   useTransform,
 } from "motion/react";
@@ -15,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { SocialLinks } from "@/components/shared/social-links";
 import { Spotlight, Sparkles } from "@/components/aceternity/backgrounds";
 import { TextGenerateEffect } from "@/components/aceternity/text-effects";
+import { HeroThree } from "@/components/sections/hero-three";
 import type { Settings } from "@/lib/settings";
 
 function LocalTime() {
@@ -41,8 +41,29 @@ function LocalTime() {
   );
 }
 
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReducedMotion(callback: () => void) {
+  const query = window.matchMedia(REDUCED_MOTION_QUERY);
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+/**
+ * Same behaviour as Motion's hook, but with a server snapshot so the first
+ * client render matches the server output. Reading matchMedia synchronously
+ * during hydration makes React throw a text mismatch on reduced-motion devices.
+ */
+function useHeroReducedMotion() {
+  return React.useSyncExternalStore(
+    subscribeReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION_QUERY).matches,
+    () => false,
+  );
+}
+
 export function Hero({ settings }: { settings: Settings }) {
-  const reduce = useReducedMotion() ?? false;
+  const reduce = useHeroReducedMotion();
   const heroRef = React.useRef<HTMLElement>(null);
   const heroCopy = [settings.tagline, settings.heroNote]
     .filter(Boolean)
@@ -51,23 +72,32 @@ export function Hero({ settings }: { settings: Settings }) {
     .concat(".");
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
+  const threePointer = React.useRef({ x: 0, y: 0 });
   const springX = useSpring(pointerX, { stiffness: 55, damping: 22, mass: 0.4 });
   const springY = useSpring(pointerY, { stiffness: 55, damping: 22, mass: 0.4 });
   const portraitX = useTransform(springX, [-0.5, 0.5], [-11, 11]);
   const portraitY = useTransform(springY, [-0.5, 0.5], [-9, 9]);
   const glowX = useTransform(springX, [-0.5, 0.5], [18, -18]);
+  const tiltX = useTransform(springY, [-0.5, 0.5], [4.5, -4.5]);
+  const tiltY = useTransform(springX, [-0.5, 0.5], [-6.5, 6.5]);
 
   function onPointerMove(event: React.PointerEvent<HTMLElement>) {
     if (reduce || event.pointerType !== "mouse") return;
     const rect = heroRef.current?.getBoundingClientRect();
     if (!rect) return;
-    pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
-    pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    pointerX.set(x);
+    pointerY.set(y);
+    threePointer.current.x = x;
+    threePointer.current.y = y;
   }
 
   function onPointerLeave() {
     pointerX.set(0);
     pointerY.set(0);
+    threePointer.current.x = 0;
+    threePointer.current.y = 0;
   }
 
   return (
@@ -212,6 +242,8 @@ export function Hero({ settings }: { settings: Settings }) {
             className="relative mx-auto w-full max-w-[430px] lg:mx-0 lg:justify-self-end"
           >
             <div className="relative mx-auto aspect-[4/3] w-full max-w-[360px] sm:aspect-[4/5] sm:max-w-[420px]">
+              <HeroThree pointer={threePointer} reduce={reduce} />
+
               <motion.div
                 aria-hidden
                 style={reduce ? undefined : { x: glowX }}
@@ -280,13 +312,23 @@ export function Hero({ settings }: { settings: Settings }) {
               </motion.span>
 
               <motion.div
-                style={reduce ? undefined : { x: portraitX, y: portraitY }}
-                className="relative size-full"
+                style={
+                  reduce
+                    ? undefined
+                    : {
+                        x: portraitX,
+                        y: portraitY,
+                        rotateX: tiltX,
+                        rotateY: tiltY,
+                        transformPerspective: 1200,
+                      }
+                }
+                className="relative size-full [transform-style:preserve-3d]"
               >
                 <motion.div
                   animate={reduce ? undefined : { y: [0, -12, 0] }}
                   transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative size-full"
+                  className="relative size-full [transform-style:preserve-3d]"
                 >
                   <div
                     className="absolute inset-0 isolate"
@@ -322,7 +364,7 @@ export function Hero({ settings }: { settings: Settings }) {
                   </div>
                 </motion.div>
 
-                <div className="pointer-events-none absolute inset-x-0 bottom-1 px-3">
+                <div className="pointer-events-none absolute inset-x-0 bottom-1 px-3 [transform:translateZ(38px)]">
                   <motion.div
                     initial={reduce ? false : { opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
