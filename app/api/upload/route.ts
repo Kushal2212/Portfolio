@@ -21,9 +21,14 @@ export const maxDuration = 60;
  * Videos are validated by container signature and, when Cloudinary is
  * configured, uploaded there and delivered through a compression
  * transformation. Without Cloudinary the original file is stored locally.
+ *
+ * Résumés are a separate `purpose=resume` upload: a validated PDF stored in
+ * public/uploads and served by the /uploads route. They are intentionally not
+ * added to the media library.
  */
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
+const PDF_TYPES = new Set(["application/pdf"]);
 const VIDEO_EXTENSIONS: Record<string, string> = {
   "video/mp4": "mp4",
   "video/webm": "webm",
@@ -31,6 +36,7 @@ const VIDEO_EXTENSIONS: Record<string, string> = {
 };
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
+const MAX_PDF_SIZE = 10 * 1024 * 1024;
 const MAX_DIMENSION = 4096;
 
 function looksLikeVideo(buffer: Buffer) {
@@ -41,6 +47,12 @@ function looksLikeVideo(buffer: Buffer) {
   }
   // MP4 / MOV both carry an ISO base media `ftyp` box near the start.
   return buffer.subarray(4, 8).toString("ascii") === "ftyp";
+}
+
+function looksLikePdf(buffer: Buffer) {
+  if (buffer.length < 8) return false;
+  // Every PDF starts with `%PDF-` and ends with an `%%EOF` marker.
+  return buffer.subarray(0, 5).toString("ascii") === "%PDF-" && buffer.lastIndexOf("%%EOF") !== -1;
 }
 
 export async function POST(request: Request) {
@@ -64,6 +76,65 @@ export async function POST(request: Request) {
   const file = form.get("file");
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "No file provided." }, { status: 400 });
+  }
+
+  // Résumé uploads are stored as-is (never re-encoded) and are not added to the
+  // media library, which only renders images and videos.
+  if (form.get("purpose") === "resume") {
+    if (!PDF_TYPES.has(file.type) && !/\.pdf$/i.test(file.name)) {
+      return NextResponse.json({ error: "The résumé must be a PDF file." }, { status: 400 });
+    }
+    if (file.size === 0) {
+      return NextResponse.json({ error: "That file is empty." }, { status: 400 });
+    }
+    if (file.size > MAX_PDF_SIZE) {
+      return NextResponse.json(
+        { error: "The résumé must be 10 MB or smaller." },
+        { status: 400 },
+      );
+    }
+
+    const source = Buffer.from(await file.arrayBuffer());
+    if (!looksLikePdf(source)) {
+      return NextResponse.json(
+        { error: "That file is not a readable PDF. Try exporting it again." },
+        { status: 400 },
+      );
+    }
+
+    const pdfBase =
+      file.name
+        .replace(/\.[^.]+$/, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 50) || "resume";
+    const pdfId = `${pdfBase}-${randomUUID().slice(0, 8)}`;
+    const filename = `${pdfId}.pdf`;
+    const url = `/uploads/${filename}`;
+
+    // PDFs are kept locally: this Cloudinary account (and many others by
+    // default) blocks public PDF delivery, which would produce 401 links.
+    try {
+      const uploadDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadDir, { recursive: true });
+      await writeFile(path.join(uploadDir, filename), source);
+    } catch (error) {
+      console.error("Local PDF upload failed", error);
+      return NextResponse.json(
+        { error: "Could not save the résumé. Please try again." },
+        { status: 500 },
+      );
+    }
+
+    revalidatePath("/admin/settings");
+    return NextResponse.json({
+      ok: true,
+      url,
+      filename,
+      mimeType: "application/pdf",
+      size: source.length,
+    });
   }
 
   const isVideo = VIDEO_TYPES.has(file.type);

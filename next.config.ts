@@ -69,6 +69,12 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async redirects() {
+    return [
+      // The résumé was renamed; keep old links and bookmarks working.
+      { source: "/resume.pdf", destination: "/Kushal_Dahal_Resume.pdf", permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

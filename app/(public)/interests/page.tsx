@@ -19,7 +19,6 @@ import { prisma } from "@/lib/prisma";
 import { interestsFallback } from "@/lib/content";
 import { BentoItem } from "@/components/aceternity/bento-grid";
 import { Reveal } from "@/components/aceternity/reveal";
-import { Badge } from "@/components/ui/badge";
 import { SportingAllegiances } from "@/components/interests/sporting-allegiances";
 import { pageMetadata } from "@/lib/seo";
 
@@ -127,62 +126,6 @@ export default async function InterestsPage() {
           </div>
 
           <SportingAllegiances />
-
-          <Reveal className="mt-16 grid gap-4 md:grid-cols-3">
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                On the desk
-              </p>
-              <ul className="mt-4 space-y-3 text-sm">
-                <li>
-                  <p className="font-medium">The Overstory</p>
-                  <p className="text-xs text-muted-foreground">Richard Powers</p>
-                </li>
-                <li>
-                  <p className="font-medium">Shape Up</p>
-                  <p className="text-xs text-muted-foreground">Ryan Singer</p>
-                </li>
-                <li>
-                  <p className="font-medium">The Dispossessed</p>
-                  <p className="text-xs text-muted-foreground">Ursula K. Le Guin</p>
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                On repeat
-              </p>
-              <ul className="mt-4 space-y-3 text-sm">
-                <li>
-                  <p className="font-medium">Music for Airports</p>
-                  <p className="text-xs text-muted-foreground">Brian Eno</p>
-                </li>
-                <li>
-                  <p className="font-medium">Promises</p>
-                  <p className="text-xs text-muted-foreground">Floating Points & Pharoah Sanders</p>
-                </li>
-                <li>
-                  <p className="font-medium">In Rainbows</p>
-                  <p className="text-xs text-muted-foreground">Radiohead</p>
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-2xl border border-border bg-card p-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Training for
-              </p>
-              <p className="mt-4 font-serif text-2xl leading-tight">
-                Annapurna 50K
-              </p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                October 2026, if my knees agree. Currently at 32km long runs and pretending the hills
-                are flat.
-              </p>
-              <Badge variant="brand" className="mt-4">
-                week 14 of 24
-              </Badge>
-            </div>
-          </Reveal>
 
           <Reveal className="mt-16">
             <p className="text-sm text-muted-foreground">

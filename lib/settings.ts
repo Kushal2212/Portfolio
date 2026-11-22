@@ -34,7 +34,7 @@ export const defaultSettings: Settings = {
   education: "BSc.CSIT, Biratnagar Multiple College",
   hometown: "Madi, Sankhuwasabha",
   avatarUrl: "/images/avatar.jpg",
-  resumeUrl: "/resume.pdf",
+  resumeUrl: "/Kushal_Dahal_Resume.pdf",
   availability: "Open to freelance work",
   heroNote:
     "Working as a full-stack developer at AvyantaTech while finishing my BSc CSIT, and exploring machine learning for agriculture.",

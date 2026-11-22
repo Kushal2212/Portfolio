@@ -17,6 +17,7 @@ const TYPES: Record<string, string> = {
   m4v: "video/x-m4v",
   webm: "video/webm",
   mov: "video/quicktime",
+  pdf: "application/pdf",
 };
 
 /**

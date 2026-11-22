@@ -5,12 +5,14 @@ import { useActionState } from "react";
 import {
   AtSign,
   Check,
+  FileText,
   ImageIcon,
   Loader2,
   MapPin,
   Plus,
   Save,
   Trash2,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import { updateSettingsAction } from "@/actions/settings";
@@ -50,9 +52,44 @@ export function SettingsForm({ settings }: { settings: Settings }) {
     settings.socials.length ? settings.socials : [{ label: "", href: "" }],
   );
   const [avatar, setAvatar] = React.useState(settings.avatarUrl);
+  const [resumeUrl, setResumeUrl] = React.useState(settings.resumeUrl);
+  const [uploadingResume, setUploadingResume] = React.useState(false);
+  const resumeInputRef = React.useRef<HTMLInputElement>(null);
   const [seoTitle, setSeoTitle] = React.useState(settings.seoTitle);
   const [seoDesc, setSeoDesc] = React.useState(settings.seoDescription);
   const lastState = React.useRef(state);
+
+  async function uploadResume(file: File) {
+    const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!isPdf) {
+      toast.error("Choose a PDF file.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("The résumé must be 10 MB or smaller.");
+      return;
+    }
+
+    setUploadingResume(true);
+    const form = new FormData();
+    form.append("file", file);
+    form.append("purpose", "resume");
+
+    try {
+      const response = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || "Could not upload the résumé.");
+        return;
+      }
+      setResumeUrl(data.url ?? "");
+      toast.success("Résumé uploaded. Save settings to apply it.");
+    } catch {
+      toast.error("Network error while uploading the résumé.");
+    } finally {
+      setUploadingResume(false);
+    }
+  }
 
   React.useEffect(() => {
     if (state === lastState.current) return;
@@ -154,7 +191,7 @@ export function SettingsForm({ settings }: { settings: Settings }) {
 
       <Section
         title="Images & files"
-        description="Profile photo and résumé. Upload files in the media library, then paste the URL here."
+        description="Profile photo and résumé. Upload a PDF directly, or paste a hosted URL."
       >
         <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
           <div className="space-y-1.5">
@@ -180,8 +217,54 @@ export function SettingsForm({ settings }: { settings: Settings }) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="resumeUrl">Résumé URL</Label>
-          <Input id="resumeUrl" name="resumeUrl" defaultValue={settings.resumeUrl} placeholder="/uploads/resume.pdf" />
+          <Label htmlFor="resumeUrl">Résumé</Label>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Input
+              id="resumeUrl"
+              name="resumeUrl"
+              value={resumeUrl}
+              onChange={(event) => setResumeUrl(event.target.value)}
+              placeholder="/uploads/resume.pdf"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              className="shrink-0 rounded-full"
+              onClick={() => resumeInputRef.current?.click()}
+              disabled={uploadingResume}
+            >
+              {uploadingResume ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Upload className="size-3.5" />
+              )}
+              {uploadingResume ? "Uploading…" : "Upload PDF"}
+            </Button>
+            <input
+              ref={resumeInputRef}
+              type="file"
+              accept="application/pdf,.pdf"
+              className="sr-only"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (file) void uploadResume(file);
+              }}
+            />
+          </div>
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-muted-foreground">
+            <span>PDF up to 10 MB. Uploading replaces the current file when you save.</span>
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 text-brand hover:underline"
+              >
+                <FileText className="size-3" /> Preview current résumé
+              </a>
+            )}
+          </p>
         </div>
       </Section>
 
