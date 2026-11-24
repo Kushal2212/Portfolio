@@ -7,7 +7,33 @@ import { musicSchema } from "@/lib/validators";
 
 type Result = { ok?: boolean; error?: string };
 
+/**
+ * Accepts "3:46", "226" or any mm:ss string and returns whole seconds.
+ * An empty value clears the length.
+ */
+function parseDuration(value: FormDataEntryValue | null) {
+  const text = String(value ?? "").trim();
+  if (!text) return { ok: true, seconds: undefined } as const;
+
+  let seconds: number | undefined;
+  if (/^\d+$/.test(text)) {
+    seconds = Number(text);
+  } else {
+    const match = /^(\d{1,3}):([0-5]\d)$/.exec(text);
+    seconds = match ? Number(match[1]) * 60 + Number(match[2]) : undefined;
+  }
+
+  if (seconds === undefined || seconds < 1 || seconds > 21_600) {
+    return { ok: false, error: "Use a track length like 3:46." } as const;
+  }
+
+  return { ok: true, seconds } as const;
+}
+
 function parseTrack(formData: FormData) {
+  const duration = parseDuration(formData.get("duration"));
+  if (!duration.ok) return { ok: false, error: duration.error } as const;
+
   const parsed = musicSchema.safeParse({
     title: String(formData.get("title") || ""),
     artist: String(formData.get("artist") || ""),
@@ -15,16 +41,22 @@ function parseTrack(formData: FormData) {
     year: formData.get("year") ?? "",
     coverUrl: String(formData.get("coverUrl") || ""),
     link: String(formData.get("link") || ""),
+    audioUrl: String(formData.get("audioUrl") || ""),
+    duration: duration.seconds,
     note: String(formData.get("note") || ""),
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Check the fields." } as const;
+    return {
+      ok: false,
+      error: parsed.error.issues[0]?.message || "Check the fields.",
+    } as const;
   }
 
   const data = parsed.data;
 
   return {
+    ok: true,
     data: {
       title: data.title,
       artist: data.artist,
@@ -32,6 +64,8 @@ function parseTrack(formData: FormData) {
       year: data.year ?? null,
       coverUrl: data.coverUrl || null,
       link: data.link || null,
+      audioUrl: data.audioUrl || null,
+      duration: data.duration ?? null,
       note: data.note || null,
       published: formData.get("published") === "true",
     },
@@ -47,7 +81,7 @@ function revalidateMusic() {
 export async function createTrackAction(formData: FormData): Promise<Result> {
   await requireAdmin();
   const parsed = parseTrack(formData);
-  if ("error" in parsed) return parsed;
+  if (!parsed.ok) return { error: parsed.error };
 
   try {
     const max = await prisma.track.aggregate({ _max: { order: true } });
@@ -64,7 +98,7 @@ export async function createTrackAction(formData: FormData): Promise<Result> {
 export async function updateTrackAction(id: string, formData: FormData): Promise<Result> {
   await requireAdmin();
   const parsed = parseTrack(formData);
-  if ("error" in parsed) return parsed;
+  if (!parsed.ok) return { error: parsed.error };
 
   try {
     await prisma.track.update({ where: { id }, data: parsed.data });

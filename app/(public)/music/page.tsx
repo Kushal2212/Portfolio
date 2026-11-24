@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Disc3, Headphones, Music2 } from "lucide-react";
 import { getPublishedTracks } from "@/lib/music";
 import { getSettings } from "@/lib/settings";
-import { TrackGrid } from "@/components/music/track-grid";
+import { Turntable } from "@/components/music/turntable";
 import { Reveal } from "@/components/aceternity/reveal";
 import { pageMetadata } from "@/lib/seo";
 
@@ -31,6 +31,11 @@ export default async function MusicPage() {
         name: track.title,
         byArtist: { "@type": "MusicGroup", name: track.artist },
         ...(track.album ? { inAlbum: { "@type": "MusicAlbum", name: track.album } } : {}),
+        ...(track.duration
+          ? {
+              duration: `PT${Math.floor(track.duration / 60)}M${track.duration % 60}S`,
+            }
+          : {}),
         ...(track.link ? { url: track.link } : {}),
       },
     })),
@@ -56,14 +61,14 @@ export default async function MusicPage() {
             <span className="font-serif font-normal">repeat</span>.
           </h1>
           <p className="mt-5 max-w-xl text-[0.98rem] leading-relaxed text-muted-foreground">
-            Albums, tracks and playlists that keep the work moving. Mostly for long build sessions,
-            slow mornings and the walk back home.
+            Albums, tracks and playlists that keep the work moving. Pick a sleeve, drop the needle
+            and take the real listen wherever the track lives.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <Music2 className="size-3.5 text-brand" /> {tracks.length}{" "}
-              {tracks.length === 1 ? "entry" : "entries"}
+              {tracks.length === 1 ? "record" : "records"}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Headphones className="size-3.5" /> Curated by {settings.fullName}
@@ -89,11 +94,13 @@ export default async function MusicPage() {
             </Reveal>
           ) : (
             <Reveal>
-              <TrackGrid tracks={tracks} />
+              <div className="border-t border-border pt-12 sm:pt-16">
+                <Turntable tracks={tracks} />
+              </div>
             </Reveal>
           )}
 
-          <Reveal className="mt-12 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <Reveal className="mt-16 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>Updated whenever something stays on repeat long enough.</p>
             <p className="font-mono uppercase tracking-[0.16em]">
               {settings.fullName} · listening

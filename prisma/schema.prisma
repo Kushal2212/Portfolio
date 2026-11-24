@@ -70,6 +70,8 @@ model Track {
   year      Int?
   coverUrl  String?
   link      String?
+  audioUrl  String?
+  duration  Int?
   note      String?
   published Boolean  @default(false)
   order     Int      @default(0)

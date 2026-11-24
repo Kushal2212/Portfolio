@@ -47,10 +47,17 @@ type Track = {
   year: number | null;
   coverUrl: string | null;
   link: string | null;
+  audioUrl: string | null;
+  duration: number | null;
   note: string | null;
   published: boolean;
   order: number;
 };
+
+function formatLength(seconds: number | null) {
+  if (!seconds) return "";
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
 
 export function MusicManager({ tracks }: { tracks: Track[] }) {
   const router = useRouter();
@@ -199,6 +206,7 @@ export function MusicManager({ tracks }: { tracks: Track[] }) {
                   {track.artist}
                   {track.album ? ` · ${track.album}` : ""}
                   {track.year ? ` · ${track.year}` : ""}
+                  {track.duration ? ` · ${formatLength(track.duration)}` : ""}
                 </p>
               </div>
 
@@ -325,7 +333,7 @@ export function MusicManager({ tracks }: { tracks: Track[] }) {
                   placeholder="2025"
                 />
               </div>
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="track-album">Album</Label>
                 <Input
                   id="track-album"
@@ -333,6 +341,17 @@ export function MusicManager({ tracks }: { tracks: Track[] }) {
                   defaultValue={editing?.album ?? ""}
                   placeholder="Optional album or EP"
                 />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="track-duration">Length</Label>
+                <Input
+                  id="track-duration"
+                  name="duration"
+                  defaultValue={editing?.duration ? formatLength(editing.duration) : ""}
+                  placeholder="3:46"
+                  inputMode="numeric"
+                />
+                <p className="text-[10px] text-muted-foreground">Format mm:ss.</p>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="track-cover">Cover image URL</Label>
@@ -354,6 +373,19 @@ export function MusicManager({ tracks }: { tracks: Track[] }) {
                   defaultValue={editing?.link ?? ""}
                   placeholder="https://open.spotify.com/…"
                 />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label htmlFor="track-audio">Audio file URL (optional)</Label>
+                <Input
+                  id="track-audio"
+                  name="audioUrl"
+                  defaultValue={editing?.audioUrl ?? ""}
+                  placeholder="https://…/track.mp3"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  A direct link to an MP3, M4A or OGG you own. Leave empty and the vinyl spins
+                  silently as a preview.
+                </p>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="track-note">Note</Label>

@@ -97,6 +97,8 @@ export const musicSchema = z.object({
   ),
   coverUrl: safeUrl(500).optional(),
   link: safeUrl(500).optional(),
+  audioUrl: safeUrl(1000).optional(),
+  duration: z.number().int().min(1).max(21_600).optional(),
   note: z.string().trim().max(300).optional().or(z.literal("")),
 });
 

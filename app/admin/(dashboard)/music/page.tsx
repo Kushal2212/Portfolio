@@ -25,6 +25,8 @@ export default async function AdminMusicPage() {
           year: track.year,
           coverUrl: track.coverUrl,
           link: track.link,
+          audioUrl: track.audioUrl,
+          duration: track.duration,
           note: track.note,
           published: track.published,
           order: track.order,

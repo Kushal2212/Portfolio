@@ -9,6 +9,8 @@ export const trackSelect = {
   year: true,
   coverUrl: true,
   link: true,
+  audioUrl: true,
+  duration: true,
   note: true,
   published: true,
   order: true,
