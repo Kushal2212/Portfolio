@@ -46,6 +46,15 @@ export async function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/play"
+                  className="group inline-flex items-center gap-1.5 text-sm text-foreground/80 transition-colors hover:text-brand"
+                >
+                  Arcade
+                  <ArrowUpRight className="size-3 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+                </Link>
+              </li>
             </ul>
           </nav>
 

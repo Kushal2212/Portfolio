@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
+  ArrowUpRight,
   Camera,
   Mountain,
   Coffee,
@@ -126,6 +128,33 @@ export default async function InterestsPage() {
           </div>
 
           <SportingAllegiances />
+
+          <Reveal className="mt-6">
+            <Link
+              href="/play"
+              className="card-surface hover-lift group flex flex-col gap-5 rounded-3xl p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+            >
+              <div className="flex items-start gap-4">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand transition-transform duration-500 group-hover:-rotate-6">
+                  <Gamepad2 className="size-5" />
+                </span>
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    Take a break
+                  </p>
+                  <h2 className="mt-1 text-xl font-semibold tracking-tight">Play a round.</h2>
+                  <p className="mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
+                    Fly the bamboo road in Flappy Bird, or pair projects and tools in Memory
+                    Match. Two small games, no installs.
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-brand">
+                Open the arcade
+                <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </span>
+            </Link>
+          </Reveal>
 
           <Reveal className="mt-16">
             <p className="text-sm text-muted-foreground">

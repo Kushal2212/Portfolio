@@ -4,6 +4,7 @@ import { PersonalDetails } from "@/components/sections/personal-details";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { LatestPosts } from "@/components/sections/latest-posts";
 import { Listening } from "@/components/sections/listening";
+import { ArcadeBreak } from "@/components/sections/arcade-break";
 import { Testimonials } from "@/components/sections/testimonials";
 import { ContactCTA } from "@/components/sections/contact-cta";
 import { getSettings } from "@/lib/settings";
@@ -11,6 +12,7 @@ import { getRecentPosts } from "@/lib/posts";
 import { getPublishedTracks } from "@/lib/music";
 import { getPublicTestimonials } from "@/lib/testimonials";
 import { getPublicProjects } from "@/lib/projects";
+import { buildProjectDeck } from "@/lib/games";
 import { absoluteUrl } from "@/lib/utils";
 
 export const revalidate = 300;
@@ -26,6 +28,9 @@ export default async function HomePage() {
 
   const testimonials = testimonialRows ?? [];
   const projects = projectRows ?? [];
+  const deck = buildProjectDeck(
+    projects.map((project) => ({ name: project.name, note: project.summary })),
+  );
   const githubUrl = settings.socials.find(
     (social) => social.label.toLowerCase() === "github",
   )?.href;
@@ -78,6 +83,7 @@ export default async function HomePage() {
       <FeaturedProjects items={projects} githubUrl={githubUrl} />
       <LatestPosts posts={posts} />
       <Listening tracks={tracks} />
+      <ArcadeBreak deck={deck} />
       <Testimonials items={testimonials} />
       <ContactCTA settings={settings} />
     </>
