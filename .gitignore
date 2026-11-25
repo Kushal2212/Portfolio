@@ -24,6 +24,9 @@ prisma/*.db-journal
 public/uploads/*
 !public/uploads/.gitkeep
 
+# Local notes
+game.md
+
 # Misc
 .DS_Store
 *.pem
